@@ -5,59 +5,74 @@
              x:Class="FitnessClub.Views.SchedulePage"
              Shell.NavBarIsVisible="False">
 
-	<VerticalStackLayout Padding="20" Spacing="16">
+    <VerticalStackLayout Padding="20" Spacing="16">
 
-		<Label Text="📅 Розклад занять" Style="{StaticResource PageTitle}"/>
-		<Label Text="Актуальний графік тренувань" Style="{StaticResource SubtitleLabel}"/>
+        <Label Text="📅 Розклад занять" Style="{StaticResource PageTitle}"/>
+        <Label Text="Актуальний графік тренувань" Style="{StaticResource SubtitleLabel}"/>
 
-		<CollectionView ItemsSource="{Binding Schedules}">
+        <CollectionView ItemsSource="{Binding Schedules}">
 
-			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="models:Schedule">
-					<Border Style="{StaticResource Card}" Margin="0,0,0,12">
-						<Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="12">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Schedule">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
 
-							<Label Grid.Row="0" Grid.Column="0"
-                                   Text="{Binding Name}"
-                                   FontFamily="OpenSansSemibold"
-                                   FontSize="18"
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="12">
+
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Text="{Binding Name}" 
+                                   FontFamily="OpenSansSemibold" 
+                                   FontSize="18" 
                                    TextColor="{StaticResource Brand}"/>
 
-							<Label Grid.Row="0" Grid.Column="1"
-                                   Text="{Binding DayOfWeek}"
+                            <Label Grid.Row="0" Grid.Column="1" 
+                                   Text="{Binding DayOfWeek}" 
                                    FontFamily="OpenSansSemibold"
                                    TextColor="{StaticResource Accent}"
-                                   HorizontalOptions="End"
+                                   HorizontalOptions="End" 
                                    VerticalOptions="Center"/>
 
-							<HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20">
+                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20">
 
-								<HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-									<Label Text="🕒" FontSize="16" VerticalOptions="Center"/>
-									<Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
+                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                    <Label Text="🕒" FontSize="16" VerticalOptions="Center"/>
+                                    <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}" 
                                            VerticalOptions="Center"/>
-								</HorizontalStackLayout>
+                                </HorizontalStackLayout>
 
-								<HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-									<Label Text="⏳" FontSize="16" VerticalOptions="Center"/>
-									<Label Text="{Binding Duration, StringFormat='{0} хв'}"
+                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                    <Label Text="⏳" FontSize="16" VerticalOptions="Center"/>
+                                    <Label Text="{Binding Duration, StringFormat='{0} хв'}" 
                                            VerticalOptions="Center"/>
-								</HorizontalStackLayout>
+                                </HorizontalStackLayout>
 
-							</HorizontalStackLayout>
+                            </HorizontalStackLayout>
 
-						</Grid>
-					</Border>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
+                            <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" Margin="0,4,0,0">
+                                <Label Text="👨‍🏫 Тренер:" 
+                                       TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}" 
+                                       VerticalOptions="Center" />
 
-			<CollectionView.EmptyView>
-				<VerticalStackLayout Spacing="10" HorizontalOptions="Center" Margin="0,40,0,0">
-					<Label Text="📭" FontSize="40" HorizontalOptions="Center"/>
-					<Label Text="Наразі розклад порожній" Style="{StaticResource SubtitleLabel}" HorizontalOptions="Center"/>
-				</VerticalStackLayout>
-			</CollectionView.EmptyView>
+                                <Label Text="{Binding Trainer.FirstName}" 
+                                       FontFamily="OpenSansSemibold" 
+                                       VerticalOptions="Center" />
 
-		</CollectionView>
-	</VerticalStackLayout>
+                                <Label Text="{Binding Trainer.LastName}" 
+                                       FontFamily="OpenSansSemibold" 
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" Margin="0,40,0,0">
+                    <Label Text="📭" FontSize="40" HorizontalOptions="Center"/>
+                    <Label Text="Наразі розклад порожній" Style="{StaticResource SubtitleLabel}" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+        </CollectionView>
+    </VerticalStackLayout>
 </ContentPage>

@@ -90,10 +90,10 @@
 
                 </Grid>
 
-            </VerticalStackLayout>
+            </VerticalStackLayout> 
 
             <!-- ВІЛЬНИЙ ПРОСТІР перед футером -->
-            <BoxView HeightRequest="60" Color="Transparent"/>
+            <BoxView HeightRequest="100" Color="Transparent"/>
 
             <!-- ФУТЕР -->
             <views:AppFooter/>

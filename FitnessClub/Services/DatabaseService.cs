@@ -140,7 +140,20 @@ namespace FitnessClub.Services
 
 
         // ===== РОЗКЛАД =====
-        public List<Schedule> GetSchedules() => _db.Table<Schedule>().ToList();
+        public List<Schedule> GetSchedules()
+        {
+            // 1. Берем голое расписание
+            var schedules = _db.Table<Schedule>().ToList();
+
+            // 2. Для каждой записи расписания вручную находим тренера по ID
+            foreach (var schedule in schedules)
+            {
+                // Ищем в таблице тренеров того, чей Id совпадает с TrainerId в расписании
+                schedule.Trainer = _db.Table<Trainer>().FirstOrDefault(t => t.Id == schedule.TrainerId);
+            }
+
+            return schedules;
+        }
         public Schedule GetSchedule(int id) => _db.Find<Schedule>(id);
         public void AddSchedule(Schedule schedule) => _db.Insert(schedule);
         public void UpdateSchedule(Schedule schedule) => _db.Update(schedule);
