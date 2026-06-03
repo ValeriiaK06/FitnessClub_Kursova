@@ -167,13 +167,25 @@
 
     <Style TargetType="Shell" ApplyToDerivedTypes="True">
         <Setter Property="Shell.BackgroundColor"
-                Value="{AppThemeBinding Light={StaticResource ElevatedLight}, Dark={StaticResource ElevatedDark}}"/>
+            Value="{AppThemeBinding Light={StaticResource ElevatedLight}, Dark={StaticResource ElevatedDark}}"/>
         <Setter Property="Shell.ForegroundColor"
-                Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+            Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
         <Setter Property="Shell.TitleColor"
-                Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+            Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
         <Setter Property="Shell.NavBarHasShadow" Value="True"/>
-      
+
+        <Setter Property="Shell.UnselectedColor"
+            Value="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+    </Style>
+
+
+    <Style TargetType="TimePicker">
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
     </Style>
 
 </ResourceDictionary>

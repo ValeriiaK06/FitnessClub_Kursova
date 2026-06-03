@@ -23,6 +23,10 @@ namespace FitnessClub
             builder.Services.AddSingleton<DatabaseService>();
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<DashboardPage>();
+            builder.Services.AddTransient<ScheduleViewModel>();
+            builder.Services.AddTransient<SchedulePage>();
+            builder.Services.AddTransient<ScheduleEditViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.Details.ScheduleEditPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

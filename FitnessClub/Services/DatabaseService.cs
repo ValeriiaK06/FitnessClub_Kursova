@@ -137,11 +137,18 @@ namespace FitnessClub.Services
         public void UpdateBooking(ClientBooking booking) => _db.Update(booking);
         public void DeleteBooking(ClientBooking booking) => _db.Delete(booking);
 
+
+
+        // ===== РОЗКЛАД =====
+        public List<Schedule> GetSchedules() => _db.Table<Schedule>().ToList();
+        public Schedule GetSchedule(int id) => _db.Find<Schedule>(id);
+        public void AddSchedule(Schedule schedule) => _db.Insert(schedule);
+        public void UpdateSchedule(Schedule schedule) => _db.Update(schedule);
+        public void DeleteSchedule(Schedule schedule) => _db.Delete(schedule);
         // ===== ДОПОМІЖНІ (тільки читання) =====
         public List<Subscription> GetSubscriptions() => _db.Table<Subscription>().ToList();
         public List<Service> GetServices() => _db.Table<Service>().ToList();
-        public List<Schedule> GetSchedules() => _db.Table<Schedule>().ToList();
-
+      
         public List<ClientSubscription> GetClientSubscriptions() => _db.Table<ClientSubscription>().ToList();
     }
 }

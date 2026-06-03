@@ -1,10 +1,77 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FitnessClub.Models"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
+             xmlns:views="clr-namespace:FitnessClub.Views"
              x:Class="FitnessClub.Views.SchedulePage"
-              Shell.NavBarIsVisible="False">
-    <VerticalStackLayout Padding="20" Spacing="8">
-        <Label Text="📅 Розклад занять" Style="{StaticResource PageTitle}"/>
-        <Label Text="Розділ у розробці" Style="{StaticResource SubtitleLabel}"/>
-    </VerticalStackLayout>
+             x:DataType="vm:ScheduleViewModel"
+             Title="">
+
+	<ScrollView>
+		<VerticalStackLayout Spacing="0">
+
+			<views:AppHeader/>
+
+			<VerticalStackLayout Padding="20,20,20,0" Spacing="16">
+
+				<VerticalStackLayout Spacing="4">
+					<Label Text="📅 Розклад занять" Style="{StaticResource PageTitle}"/>
+					<Label Text="Керування заняттями клубу" Style="{StaticResource SubtitleLabel}"/>
+				</VerticalStackLayout>
+
+				<Button Text="➕ Додати заняття" Command="{Binding AddCommand}"/>
+
+				<CollectionView ItemsSource="{Binding Schedules}">
+					<CollectionView.ItemsLayout>
+						<LinearItemsLayout Orientation="Vertical" ItemSpacing="14"/>
+					</CollectionView.ItemsLayout>
+					<CollectionView.ItemTemplate>
+						<DataTemplate x:DataType="models:Schedule">
+							<Border Style="{StaticResource Card}">
+								<VerticalStackLayout Spacing="10">
+
+									<Grid ColumnDefinitions="*,Auto">
+										<Label Grid.Column="0" Text="{Binding Name}"
+                                               FontFamily="OpenSansSemibold" FontSize="18"
+                                               TextColor="{StaticResource Brand}"/>
+										<Border Grid.Column="1" BackgroundColor="{StaticResource Accent}"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                                Padding="10,4" VerticalOptions="Center">
+											<Label Text="{Binding DayOfWeek}" FontSize="12"
+                                                   TextColor="{StaticResource White}"/>
+										</Border>
+									</Grid>
+
+									<Label Text="{Binding StartTime, StringFormat='🕐 Початок: {0:hh\\:mm}'}"
+                                           Style="{StaticResource SubtitleLabel}"/>
+									<Label Text="{Binding Duration, StringFormat='⏱️ Тривалість: {0} хв'}"
+                                           Style="{StaticResource SubtitleLabel}"/>
+
+									<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+										<Button Grid.Column="0" Text="✏️ Редагувати"
+                                                Command="{Binding Source={x:Reference Schedule}, Path=BindingContext.EditCommand}"
+                                                CommandParameter="{Binding Id}"
+                                                FontSize="13" MinimumHeightRequest="42"/>
+										<Button Grid.Column="1" Text="🗑️ Видалити"
+                                                Command="{Binding Source={x:Reference Schedule}, Path=BindingContext.DeleteCommand}"
+                                                CommandParameter="{Binding Id}"
+                                                Style="{StaticResource DangerButton}"
+                                                FontSize="13" MinimumHeightRequest="42"/>
+									</Grid>
+
+								</VerticalStackLayout>
+							</Border>
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+
+			</VerticalStackLayout>
+
+			<BoxView HeightRequest="60" Color="Transparent"/>
+
+			<views:AppFooter/>
+
+		</VerticalStackLayout>
+	</ScrollView>
 </ContentPage>

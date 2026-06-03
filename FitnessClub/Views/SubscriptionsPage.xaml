@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:FitnessClub.Views"
              x:Class="FitnessClub.Views.SubscriptionsPage"
-             Shell.NavBarIsVisible="False">
+             Title="">
 	<Grid RowDefinitions="*,Auto">
 		<ScrollView Grid.Row="0">
 			<VerticalStackLayout Padding="20" Spacing="8">

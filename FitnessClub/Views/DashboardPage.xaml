@@ -5,101 +5,99 @@
              x:Class="FitnessClub.Views.DashboardPage"
              Title="">
 
-    <Grid RowDefinitions="Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
 
-        <!-- ШАПКА (фіксована) -->
-        <views:AppHeader Grid.Row="0"/>
+            <!-- ШАПКА (скролиться разом зі сторінкою) -->
+            <views:AppHeader/>
 
-        <!-- КОНТЕНТ + ФУТЕР (скролиться разом) -->
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="20">
+            <!-- БАНЕР впритул до країв і до шапки -->
+            <Image Source="banner.jpg"
+                   Aspect="AspectFill"
+                   HeightRequest="180"/>
 
-                <VerticalStackLayout Padding="20,20,20,0" Spacing="20">
+            <!-- ОСНОВНИЙ КОНТЕНТ -->
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="20">
 
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="Вітаємо 👋" Style="{StaticResource PageTitle}"/>
-                        <Label Text="Огляд спортивного клубу" Style="{StaticResource SubtitleLabel}"/>
-                    </VerticalStackLayout>
+                <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" Padding="0">
+                    <Grid HeightRequest="140">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="{StaticResource Brand}" Offset="0"/>
+                                <GradientStop Color="{StaticResource Accent}" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <VerticalStackLayout Padding="24" VerticalOptions="Center" Spacing="6">
+                            <Label Text="FitnessClub Admin" FontFamily="OpenSansSemibold"
+                                   FontSize="22" TextColor="{StaticResource White}"/>
+                            <Label Text="Керуйте тренерами, клієнтами та розкладом в одному місці"
+                                   FontSize="13" TextColor="{StaticResource Gray100}"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
 
-                    <!-- Банер -->
-                    <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" Padding="0">
-                        <Grid HeightRequest="140">
-                            <Grid.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="{StaticResource Brand}" Offset="0"/>
-                                    <GradientStop Color="{StaticResource Accent}" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Grid.Background>
-                            <VerticalStackLayout Padding="24" VerticalOptions="Center" Spacing="6">
-                                <Label Text="FitnessClub Admin" FontFamily="OpenSansSemibold"
-                                       FontSize="22" TextColor="{StaticResource White}"/>
-                                <Label Text="Керуйте тренерами, клієнтами та розкладом в одному місці"
-                                       FontSize="13" TextColor="{StaticResource Gray100}"/>
-                            </VerticalStackLayout>
-                        </Grid>
+                <!-- Статистика -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto"
+                      ColumnSpacing="14" RowSpacing="14">
+
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="👨‍🏫 Тренери" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="{Binding TrainersCount}" FontFamily="OpenSansSemibold"
+                                   FontSize="30" TextColor="{StaticResource Brand}"/>
+                        </VerticalStackLayout>
                     </Border>
 
-                    <!-- Статистика -->
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto"
-                          ColumnSpacing="14" RowSpacing="14">
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="👤 Клієнти" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="{Binding ClientsCount}" FontFamily="OpenSansSemibold"
+                                   FontSize="30" TextColor="{StaticResource Brand}"/>
+                        </VerticalStackLayout>
+                    </Border>
 
-                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource Card}">
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="👨‍🏫 Тренери" Style="{StaticResource SubtitleLabel}"/>
-                                <Label Text="{Binding TrainersCount}" FontFamily="OpenSansSemibold"
-                                       FontSize="30" TextColor="{StaticResource Brand}"/>
-                            </VerticalStackLayout>
-                        </Border>
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="💳 Абонементи" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="{Binding SubscriptionsCount}" FontFamily="OpenSansSemibold"
+                                   FontSize="30" TextColor="{StaticResource Brand}"/>
+                        </VerticalStackLayout>
+                    </Border>
 
-                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Card}">
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="👤 Клієнти" Style="{StaticResource SubtitleLabel}"/>
-                                <Label Text="{Binding ClientsCount}" FontFamily="OpenSansSemibold"
-                                       FontSize="30" TextColor="{StaticResource Brand}"/>
-                            </VerticalStackLayout>
-                        </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="✅ Активних абонементів" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="{Binding ActiveSubsCount}" FontFamily="OpenSansSemibold"
+                                   FontSize="30" TextColor="{StaticResource Success}"/>
+                        </VerticalStackLayout>
+                    </Border>
 
-                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Card}">
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="💳 Абонементи" Style="{StaticResource SubtitleLabel}"/>
-                                <Label Text="{Binding SubscriptionsCount}" FontFamily="OpenSansSemibold"
-                                       FontSize="30" TextColor="{StaticResource Brand}"/>
-                            </VerticalStackLayout>
-                        </Border>
+                    <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="📅 Занять" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="{Binding SchedulesCount}" FontFamily="OpenSansSemibold"
+                                   FontSize="30" TextColor="{StaticResource Brand}"/>
+                        </VerticalStackLayout>
+                    </Border>
 
-                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource Card}">
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="✅ Активних абонементів" Style="{StaticResource SubtitleLabel}"/>
-                                <Label Text="{Binding ActiveSubsCount}" FontFamily="OpenSansSemibold"
-                                       FontSize="30" TextColor="{StaticResource Success}"/>
-                            </VerticalStackLayout>
-                        </Border>
+                    <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="📝 Записів" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="{Binding BookingsCount}" FontFamily="OpenSansSemibold"
+                                   FontSize="30" TextColor="{StaticResource Brand}"/>
+                        </VerticalStackLayout>
+                    </Border>
 
-                        <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource Card}">
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="📅 Занять" Style="{StaticResource SubtitleLabel}"/>
-                                <Label Text="{Binding SchedulesCount}" FontFamily="OpenSansSemibold"
-                                       FontSize="30" TextColor="{StaticResource Brand}"/>
-                            </VerticalStackLayout>
-                        </Border>
-
-                        <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Card}">
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="📝 Записів" Style="{StaticResource SubtitleLabel}"/>
-                                <Label Text="{Binding BookingsCount}" FontFamily="OpenSansSemibold"
-                                       FontSize="30" TextColor="{StaticResource Brand}"/>
-                            </VerticalStackLayout>
-                        </Border>
-
-                    </Grid>
-
-                </VerticalStackLayout>
-
-     
-                <views:AppFooter/>
+                </Grid>
 
             </VerticalStackLayout>
-        </ScrollView>
 
-    </Grid>
+            <!-- ВІЛЬНИЙ ПРОСТІР перед футером -->
+            <BoxView HeightRequest="60" Color="Transparent"/>
+
+            <!-- ФУТЕР -->
+            <views:AppFooter/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
