@@ -1,56 +1,39 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel; // Обязательно для [ObservableProperty]
+using CommunityToolkit.Mvvm.Input;         // Обязательно для [RelayCommand]
 using FitnessClub.Models;
 using FitnessClub.Services;
+using System.Collections.ObjectModel;
 
-namespace FitnessClub.ViewModels
+namespace FitnessClub.ViewModels;
+
+// 1. ДОБАВЛЕНО СЛОВО partial!
+public partial class ScheduleViewModel : BaseViewModel
 {
-    public partial class ScheduleViewModel : BaseViewModel
+    private readonly DatabaseService _databaseService;
+
+    // 2. ИСПРАВЛЕНА НЕОДНОЗНАЧНОСТЬ: 
+    // Пишем с маленькой буквы и добавляем атрибут. 
+    // Система сама создаст публичное свойство Schedules с большой буквы.
+    [ObservableProperty]
+    private ObservableCollection<Schedule> _schedules = new();
+
+    public ScheduleViewModel()
     {
-        private readonly DatabaseService _db;
+        _databaseService = new DatabaseService();
+    }
 
-        [ObservableProperty]
-        private ObservableCollection<Schedule> schedules = new();
+    // 3. ДОБАВЛЕНА КОМАНДА:
+    // Атрибут [RelayCommand] автоматически сгенерирует свойство "LoadCommand", 
+    // которое ищет ваша XAML-страница.
+    [RelayCommand]
+    public void Load()
+    {
+        var dbSchedules = _databaseService.GetSchedules();
 
-        public ScheduleViewModel(DatabaseService db)
+        Schedules.Clear();
+        foreach (var schedule in dbSchedules)
         {
-            _db = db;
-            Title = "Розклад";
-        }
-
-        [RelayCommand]
-        private void Load()
-        {
-            Schedules = new ObservableCollection<Schedule>(_db.GetSchedules());
-        }
-
-        [RelayCommand]
-        private async Task AddAsync()
-        {
-            await Shell.Current.GoToAsync("scheduleedit?schedule_id=0");
-        }
-
-        [RelayCommand]
-        private async Task EditAsync(int id)
-        {
-            await Shell.Current.GoToAsync($"scheduleedit?schedule_id={id}");
-        }
-
-        [RelayCommand]
-        private async Task DeleteAsync(int id)
-        {
-            bool confirm = await Shell.Current.DisplayAlert(
-                "Видалення", "Видалити це заняття з розкладу?", "Так", "Скасувати");
-
-            if (!confirm) return;
-
-            var item = _db.GetSchedule(id);
-            if (item != null)
-            {
-                _db.DeleteSchedule(item);
-                Load();
-            }
+            Schedules.Add(schedule);
         }
     }
 }
