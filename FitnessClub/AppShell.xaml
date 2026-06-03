@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="FitnessClub.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:FitnessClub.Views"
+    Title="FitnessClub"
+    FlyoutBehavior="Flyout">
+
+    <Shell.FlyoutHeader>
+        <Grid HeightRequest="160" Padding="20"
+          BackgroundColor="{AppThemeBinding Light={StaticResource Brand}, Dark={StaticResource ElevatedDark}}"
+          RowDefinitions="*,Auto">
+            <VerticalStackLayout Grid.Row="0" VerticalOptions="End" Spacing="2">
+                <Label Text="💪 FitnessClub" TextColor="{StaticResource White}"
+                   FontFamily="OpenSansSemibold" FontSize="22"/>
+                <Label Text="Панель адміністратора" TextColor="{StaticResource Gray200}"
+                   FontSize="13"/>
+            </VerticalStackLayout>
+
+            <!-- Світч теми -->
+            <HorizontalStackLayout Grid.Row="1" Spacing="8" Margin="0,12,0,0">
+                <Label Text="🌙 Темна тема" TextColor="{StaticResource White}"
+                   FontSize="13" VerticalOptions="Center"/>
+                <Switch x:Name="ThemeSwitch" Toggled="OnThemeSwitchToggled"
+                    VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    
+
+    <!-- Головна + Розклад як вкладки -->
+    <FlyoutItem Title="Головна" Route="dashboard">
+        <Tab Title="Переглянути розклад">
+            <ShellContent Title="Дашборд" Route="dashboardpage"
+                          ContentTemplate="{DataTemplate views:DashboardPage}"/>
+            <ShellContent Title="Розклад" Route="schedulepage"
+                          ContentTemplate="{DataTemplate views:SchedulePage}"/>
+        </Tab>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Тренери" Route="trainers">
+        <ShellContent ContentTemplate="{DataTemplate views:TrainersPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Клієнти" Route="clients">
+        <ShellContent ContentTemplate="{DataTemplate views:ClientsPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Абонементи" Route="subscriptions">
+        <ShellContent ContentTemplate="{DataTemplate views:SubscriptionsPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Послуги" Route="services">
+        <ShellContent ContentTemplate="{DataTemplate views:ServicesPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Абонементи клієнтів" Route="clientsubs">
+        <ShellContent ContentTemplate="{DataTemplate views:ClientSubsPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Записи клієнтів" Route="bookings">
+        <ShellContent ContentTemplate="{DataTemplate views:BookingsPage}"/>
+    </FlyoutItem>
+
+</Shell>
