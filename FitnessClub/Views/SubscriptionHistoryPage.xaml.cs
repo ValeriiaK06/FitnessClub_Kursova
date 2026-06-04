@@ -2,11 +2,11 @@
 
 namespace FitnessClub.Views;
 
-public partial class ClientSubsPage : ContentPage
+public partial class SubscriptionHistoryPage : ContentPage
 {
-    private readonly ClientSubsViewModel _vm;
+    private readonly SubscriptionHistoryViewModel _vm;
 
-    public ClientSubsPage(ClientSubsViewModel vm)
+    public SubscriptionHistoryPage(SubscriptionHistoryViewModel vm)
     {
         InitializeComponent();
         BindingContext = vm;

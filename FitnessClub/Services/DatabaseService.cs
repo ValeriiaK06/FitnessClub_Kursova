@@ -9,6 +9,7 @@ namespace FitnessClub.Services
 
         public DatabaseService()
         {
+
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
             _db = new SQLiteConnection(dbPath);
 
@@ -26,6 +27,7 @@ namespace FitnessClub.Services
             _db.CreateTable<ClientSubscription>();
             _db.CreateTable<Schedule>();
             _db.CreateTable<ClientBooking>();
+            _db.CreateTable<SubscriptionHistory>();
         }
 
         private void SeedData()
@@ -124,7 +126,33 @@ namespace FitnessClub.Services
         public void DeleteTrainer(Trainer trainer) => _db.Delete(trainer);
 
         // ===== КЛІЄНТИ =====
-        public List<Client> GetClients() => _db.Table<Client>().ToList();
+        public List<Client> GetClients()
+        {
+            var clients = _db.Table<Client>().ToList();
+
+            foreach (var client in clients)
+            {
+                // Шукаємо активний абонемент цього клієнта
+                var clientSub = _db.Table<ClientSubscription>()
+                    .FirstOrDefault(cs => cs.ClientId == client.Id && cs.IsActive);
+
+                if (clientSub != null)
+                {
+                    var sub = _db.Table<Subscription>()
+                        .FirstOrDefault(s => s.Id == clientSub.SubscriptionId);
+
+                    client.SubscriptionName = sub?.Name ?? "—";
+                    client.HasActiveSubscription = true;
+                }
+                else
+                {
+                    client.SubscriptionName = "Немає активного";
+                    client.HasActiveSubscription = false;
+                }
+            }
+
+            return clients;
+        }
         public Client GetClient(int id) => _db.Find<Client>(id);
         public void AddClient(Client client) => _db.Insert(client);
         public void UpdateClient(Client client) => _db.Update(client);
@@ -158,10 +186,44 @@ namespace FitnessClub.Services
         public void AddSchedule(Schedule schedule) => _db.Insert(schedule);
         public void UpdateSchedule(Schedule schedule) => _db.Update(schedule);
         public void DeleteSchedule(Schedule schedule) => _db.Delete(schedule);
+
+
+
+
+        // ===== АБОНЕМЕНТИ КЛІЄНТІВ =====
+        public List<ClientSubscription> GetClientSubscriptions()
+        {
+            var list = _db.Table<ClientSubscription>().ToList();
+
+            foreach (var cs in list)
+            {
+                var client = _db.Table<Client>().FirstOrDefault(c => c.Id == cs.ClientId);
+                cs.ClientName = client != null ? $"{client.LastName} {client.FirstName}" : "—";
+
+                var sub = _db.Table<Subscription>().FirstOrDefault(s => s.Id == cs.SubscriptionId);
+                cs.PlanName = sub?.Name ?? "—";
+            }
+
+            return list;
+        }
+        public ClientSubscription GetClientSubscription(int id) => _db.Find<ClientSubscription>(id);
+        public void AddClientSubscription(ClientSubscription cs) => _db.Insert(cs);
+        public void UpdateClientSubscription(ClientSubscription cs) => _db.Update(cs);
+        public void DeleteClientSubscription(ClientSubscription cs) => _db.Delete(cs);
+
+
+
+
+        // ===== ІСТОРІЯ АБОНЕМЕНТІВ =====
+        public List<SubscriptionHistory> GetSubscriptionHistory() =>
+            _db.Table<SubscriptionHistory>().OrderByDescending(h => h.ActionDate).ToList();
+        public void AddHistory(SubscriptionHistory h) => _db.Insert(h);
+
+
         // ===== ДОПОМІЖНІ (тільки читання) =====
         public List<Subscription> GetSubscriptions() => _db.Table<Subscription>().ToList();
         public List<Service> GetServices() => _db.Table<Service>().ToList();
       
-        public List<ClientSubscription> GetClientSubscriptions() => _db.Table<ClientSubscription>().ToList();
+       
     }
 }

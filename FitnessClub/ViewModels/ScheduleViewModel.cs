@@ -1,39 +1,58 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel; // Обязательно для [ObservableProperty]
-using CommunityToolkit.Mvvm.Input;         // Обязательно для [RelayCommand]
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FitnessClub.Models;
 using FitnessClub.Services;
 using System.Collections.ObjectModel;
 
 namespace FitnessClub.ViewModels;
 
-// 1. ДОБАВЛЕНО СЛОВО partial!
 public partial class ScheduleViewModel : BaseViewModel
 {
-    private readonly DatabaseService _databaseService;
+    private readonly DatabaseService _db;
 
-    // 2. ИСПРАВЛЕНА НЕОДНОЗНАЧНОСТЬ: 
-    // Пишем с маленькой буквы и добавляем атрибут. 
-    // Система сама создаст публичное свойство Schedules с большой буквы.
     [ObservableProperty]
-    private ObservableCollection<Schedule> _schedules = new();
+    private ObservableCollection<Schedule> schedules = new();
 
-    public ScheduleViewModel()
+    // DI передає той самий singleton DatabaseService
+    public ScheduleViewModel(DatabaseService db)
     {
-        _databaseService = new DatabaseService();
+        _db = db;
+        Title = "Розклад";
     }
 
-    // 3. ДОБАВЛЕНА КОМАНДА:
-    // Атрибут [RelayCommand] автоматически сгенерирует свойство "LoadCommand", 
-    // которое ищет ваша XAML-страница.
     [RelayCommand]
-    public void Load()
+    private void Load()
     {
-        var dbSchedules = _databaseService.GetSchedules();
-
+        var data = _db.GetSchedules();
         Schedules.Clear();
-        foreach (var schedule in dbSchedules)
+        foreach (var s in data)
+            Schedules.Add(s);
+    }
+
+    [RelayCommand]
+    private async Task AddAsync()
+    {
+        await Shell.Current.GoToAsync("scheduleedit?schedule_id=0");
+    }
+
+    [RelayCommand]
+    private async Task EditAsync(int id)
+    {
+        await Shell.Current.GoToAsync($"scheduleedit?schedule_id={id}");
+    }
+
+    [RelayCommand]
+    private async Task DeleteAsync(int id)
+    {
+        bool confirm = await Shell.Current.DisplayAlert(
+            "Видалення", "Видалити це заняття з розкладу?", "Так", "Скасувати");
+        if (!confirm) return;
+
+        var item = _db.GetSchedule(id);
+        if (item != null)
         {
-            Schedules.Add(schedule);
+            _db.DeleteSchedule(item);
+            Load();
         }
     }
 }

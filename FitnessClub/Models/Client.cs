@@ -72,7 +72,22 @@ namespace FitnessClub.Models
             get => registrationDate;
             set { if (registrationDate != value) { registrationDate = value; OnPropertyChanged(); } }
         }
+        private string subscriptionName = string.Empty;
+        private bool hasActiveSubscription;
 
+        [SQLite.Ignore]
+        public string SubscriptionName
+        {
+            get => subscriptionName;
+            set { if (subscriptionName != value) { subscriptionName = value; OnPropertyChanged(); } }
+        }
+
+        [SQLite.Ignore]
+        public bool HasActiveSubscription
+        {
+            get => hasActiveSubscription;
+            set { if (hasActiveSubscription != value) { hasActiveSubscription = value; OnPropertyChanged(); } }
+        }
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

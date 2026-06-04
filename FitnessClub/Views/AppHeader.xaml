@@ -2,7 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FitnessClub.Views.AppHeader">
-	<Grid HeightRequest="64"
+	<Grid HeightRequest="80"
           BackgroundColor="{AppThemeBinding Light={StaticResource Brand}, Dark={StaticResource SurfaceDark}}">
         <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
             <Label Text="💪 FitnessClub" FontFamily="OpenSansSemibold"

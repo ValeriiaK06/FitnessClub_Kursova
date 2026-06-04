@@ -9,6 +9,10 @@ namespace FitnessClub
         {
             InitializeComponent();
             ThemeSwitch.IsToggled = Application.Current.RequestedTheme == AppTheme.Dark;
+            Routing.RegisterRoute("scheduleedit", typeof(FitnessClub.Views.Details.ScheduleEditPage));
+            Routing.RegisterRoute("traineredit", typeof(FitnessClub.Views.Details.TrainerEditPage));
+            Routing.RegisterRoute("clientedit", typeof(FitnessClub.Views.Details.ClientEditPage));
+            Routing.RegisterRoute("clientsubedit", typeof(FitnessClub.Views.Details.ClientSubEditPage));
 
             // Маршрути edit-сторінок (зареєструємо по мірі створення розділів)
             //Routing.RegisterRoute("traineredit", typeof(TrainerEditPage));

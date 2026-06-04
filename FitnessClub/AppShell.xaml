@@ -57,7 +57,12 @@
     </FlyoutItem>
 
     <FlyoutItem Title="Абонементи клієнтів" Route="clientsubs">
-        <ShellContent ContentTemplate="{DataTemplate views:ClientSubsPage}"/>
+        <Tab Title="Переглянути історію">
+            <ShellContent Title="Поточні" Route="clientsubspage"
+                          ContentTemplate="{DataTemplate views:ClientSubsPage}"/>
+            <ShellContent Title="Історія" Route="historypage"
+                          ContentTemplate="{DataTemplate views:SubscriptionHistoryPage}"/>
+        </Tab>
     </FlyoutItem>
 
     <FlyoutItem Title="Записи клієнтів" Route="bookings">

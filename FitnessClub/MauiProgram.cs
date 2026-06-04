@@ -27,6 +27,20 @@ namespace FitnessClub
             builder.Services.AddTransient<SchedulePage>();
             builder.Services.AddTransient<ScheduleEditViewModel>();
             builder.Services.AddTransient<FitnessClub.Views.Details.ScheduleEditPage>();
+            builder.Services.AddTransient<TrainersViewModel>();
+            builder.Services.AddTransient<TrainersPage>();
+            builder.Services.AddTransient<TrainerEditViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.Details.TrainerEditPage>();
+            builder.Services.AddTransient<ClientsViewModel>();
+            builder.Services.AddTransient<ClientsPage>();
+            builder.Services.AddTransient<ClientEditViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.Details.ClientEditPage>();
+            builder.Services.AddTransient<ClientSubsViewModel>();
+            builder.Services.AddTransient<ClientSubsPage>();
+            builder.Services.AddTransient<ClientSubEditViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.Details.ClientSubEditPage>();
+            builder.Services.AddTransient<SubscriptionHistoryViewModel>();
+            builder.Services.AddTransient<SubscriptionHistoryPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

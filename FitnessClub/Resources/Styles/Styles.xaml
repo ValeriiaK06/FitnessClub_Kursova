@@ -52,7 +52,7 @@
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="MinimumHeightRequest" Value="54"/>
     </Style>
 
     <Style TargetType="Editor">
@@ -73,7 +73,7 @@
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="MinimumHeightRequest" Value="54"/>
     </Style>
 
     <Style TargetType="DatePicker">
@@ -82,7 +82,7 @@
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="MinimumHeightRequest" Value="54"/>
     </Style>
 
     <Style TargetType="Switch">
@@ -142,6 +142,7 @@
                 Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"/>
         <Setter Property="StrokeThickness" Value="1"/>
         <Setter Property="Padding" Value="12,0"/>
+        <Setter Property="MinimumHeightRequest" Value="52"/>
     </Style>
 
     <!-- Вторинна кнопка -->
@@ -185,7 +186,7 @@
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="MinimumHeightRequest" Value="54"/>
     </Style>
 
 </ResourceDictionary>

@@ -1,0 +1,57 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using FitnessClub.Models;
+using FitnessClub.Services;
+using System.Collections.ObjectModel;
+
+namespace FitnessClub.ViewModels;
+
+public partial class TrainersViewModel : BaseViewModel
+{
+    private readonly DatabaseService _db;
+
+    [ObservableProperty]
+    private ObservableCollection<Trainer> trainers = new();
+
+    public TrainersViewModel(DatabaseService db)
+    {
+        _db = db;
+        Title = "Тренери";
+    }
+
+    [RelayCommand]
+    private void Load()
+    {
+        var data = _db.GetTrainers();
+        Trainers.Clear();
+        foreach (var t in data)
+            Trainers.Add(t);
+    }
+
+    [RelayCommand]
+    private async Task AddAsync()
+    {
+        await Shell.Current.GoToAsync("traineredit?trainer_id=0");
+    }
+
+    [RelayCommand]
+    private async Task EditAsync(int id)
+    {
+        await Shell.Current.GoToAsync($"traineredit?trainer_id={id}");
+    }
+
+    [RelayCommand]
+    private async Task DeleteAsync(int id)
+    {
+        bool confirm = await Shell.Current.DisplayAlert(
+            "Видалення", "Видалити цього тренера?", "Так", "Скасувати");
+        if (!confirm) return;
+
+        var item = _db.GetTrainer(id);
+        if (item != null)
+        {
+            _db.DeleteTrainer(item);
+            Load();
+        }
+    }
+}

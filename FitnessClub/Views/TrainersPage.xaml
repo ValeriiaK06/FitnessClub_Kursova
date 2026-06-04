@@ -1,10 +1,133 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FitnessClub.Models"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
+             xmlns:views="clr-namespace:FitnessClub.Views"
              x:Class="FitnessClub.Views.TrainersPage"
-              Title="">
-    <VerticalStackLayout Padding="20" Spacing="8">
-        <Label Text="👨‍🏫 Тренери" Style="{StaticResource PageTitle}"/>
-        <Label Text="Розділ у розробці" Style="{StaticResource SubtitleLabel}"/>
-    </VerticalStackLayout>
+             x:DataType="vm:TrainersViewModel"
+             x:Name="PageRoot"
+             Title="">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <views:AppHeader/>
+
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
+
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="👨‍🏫 Тренери" Style="{StaticResource PageTitle}"/>
+                        <Label Text="Команда клубу" Style="{StaticResource SubtitleLabel}"/>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="1" Text="＋"
+                            Command="{Binding AddCommand}"
+                            FontSize="22" FontAttributes="Bold"
+                            WidthRequest="48" HeightRequest="48"
+                            Padding="0" CornerRadius="14"
+                            VerticalOptions="Center"/>
+                </Grid>
+
+                <FlexLayout BindableLayout.ItemsSource="{Binding Trainers}"
+                            Wrap="Wrap" JustifyContent="Center">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Trainer">
+
+                            <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" Padding="0"
+                                    FlexLayout.Basis="350"
+                                    FlexLayout.Shrink="0"
+                                    FlexLayout.Grow="1"
+                                    Margin="7"
+                                    HeightRequest="360">
+                                <Grid RowDefinitions="Auto,*,Auto">
+                                    <Grid.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="{StaticResource Brand}" Offset="0"/>
+                                            <GradientStop Color="{StaticResource Accent}" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+
+                                    <Border Grid.Row="0"
+                                            StrokeShape="RoundRectangle 16"
+                                            Stroke="{StaticResource White}"
+                                            StrokeThickness="3"
+                                           HeightRequest="150"
+                                            WidthRequest="140"
+                                            HorizontalOptions="Center"
+                                            Margin="0,18,0,0"
+                                            Padding="0">
+                                        <Image Source="{Binding Photo}" Aspect="AspectFill"/>
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Row="1" Spacing="8"
+                                                         Padding="14,12,14,0"
+                                                         VerticalOptions="Start">
+                                        <Label HorizontalTextAlignment="Center"
+                                               FontFamily="OpenSansSemibold" FontSize="17"
+                                               TextColor="{StaticResource White}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding LastName}"/>
+                                                    <Span Text=" "/>
+                                                    <Span Text="{Binding FirstName}"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <Border BackgroundColor="{StaticResource White}"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                                Padding="8,3" HorizontalOptions="Center">
+                                            <Label Text="{Binding Specialization}"
+                                                   HorizontalTextAlignment="Center"
+                                                   FontSize="11" FontAttributes="Bold"
+                                                   TextColor="{StaticResource Brand}"/>
+                                        </Border>
+
+                                        <Label Text="{Binding Experience, StringFormat='⭐ {0} р. досвіду'}"
+                                               HorizontalTextAlignment="Center"
+                                               FontSize="13"
+                                               TextColor="{StaticResource White}"/>
+                                        <Label Text="{Binding Phone, StringFormat='📞 {0}'}"
+                                               HorizontalTextAlignment="Center"
+                                               FontSize="12"
+                                               TextColor="{StaticResource Gray100}"/>
+                                    </VerticalStackLayout>
+
+                                    <HorizontalStackLayout Grid.Row="2" Spacing="8"
+                                                           HorizontalOptions="Center"
+                                                           Padding="0,0,0,16">
+                                        <Button Text="✏️"
+                                                Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditCommand}"
+                                                CommandParameter="{Binding Id}"
+                                                FontSize="14" Padding="0"
+                                                WidthRequest="40" HeightRequest="40"
+                                                CornerRadius="12"
+                                                BackgroundColor="{StaticResource White}"
+                                                TextColor="{StaticResource Brand}"/>
+                                        <Button Text="🗑"
+                                                Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteCommand}"
+                                                CommandParameter="{Binding Id}"
+                                                FontSize="14" Padding="0"
+                                                WidthRequest="40" HeightRequest="40"
+                                                CornerRadius="12"
+                                                BackgroundColor="{StaticResource Danger}"/>
+                                    </HorizontalStackLayout>
+
+                                </Grid>
+                            </Border>
+
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="60" Color="Transparent"/>
+
+            <views:AppFooter/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

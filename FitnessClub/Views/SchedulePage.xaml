@@ -2,77 +2,137 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:FitnessClub.Models"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
+             xmlns:views="clr-namespace:FitnessClub.Views"
              x:Class="FitnessClub.Views.SchedulePage"
-             Shell.NavBarIsVisible="False">
+             x:DataType="vm:ScheduleViewModel"
+             x:Name="PageRoot"
+             Title="">
 
-    <VerticalStackLayout Padding="20" Spacing="16">
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
 
-        <Label Text="📅 Розклад занять" Style="{StaticResource PageTitle}"/>
-        <Label Text="Актуальний графік тренувань" Style="{StaticResource SubtitleLabel}"/>
+            <!-- ШАПКА -->
+            <views:AppHeader/>
 
-        <CollectionView ItemsSource="{Binding Schedules}">
+            <!-- КОНТЕНТ -->
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Schedule">
-                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                <!-- Заголовок + кнопка додавання -->
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="📅 Розклад занять" Style="{StaticResource PageTitle}"/>
+                        <Label Text="Актуальний графік тренувань" Style="{StaticResource SubtitleLabel}"/>
+                    </VerticalStackLayout>
 
-                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="12">
+                    <Button Grid.Column="1" Text="＋"
+                            Command="{Binding AddCommand}"
+                            FontSize="22" FontAttributes="Bold"
+                            WidthRequest="48" HeightRequest="48"
+                            Padding="0" CornerRadius="14"
+                            VerticalOptions="Center"/>
+                </Grid>
 
-                            <Label Grid.Row="0" Grid.Column="0" 
-                                   Text="{Binding Name}" 
-                                   FontFamily="OpenSansSemibold" 
-                                   FontSize="18" 
-                                   TextColor="{StaticResource Brand}"/>
+                <!-- ТАБЛИЦЯ -->
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <VerticalStackLayout Spacing="0">
 
-                            <Label Grid.Row="0" Grid.Column="1" 
-                                   Text="{Binding DayOfWeek}" 
-                                   FontFamily="OpenSansSemibold"
-                                   TextColor="{StaticResource Accent}"
-                                   HorizontalOptions="End" 
-                                   VerticalOptions="Center"/>
-
-                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20">
-
-                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                    <Label Text="🕒" FontSize="16" VerticalOptions="Center"/>
-                                    <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}" 
-                                           VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-
-                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                    <Label Text="⏳" FontSize="16" VerticalOptions="Center"/>
-                                    <Label Text="{Binding Duration, StringFormat='{0} хв'}" 
-                                           VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-
-                            </HorizontalStackLayout>
-
-                            <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" Margin="0,4,0,0">
-                                <Label Text="👨‍🏫 Тренер:" 
-                                       TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}" 
-                                       VerticalOptions="Center" />
-
-                                <Label Text="{Binding Trainer.FirstName}" 
-                                       FontFamily="OpenSansSemibold" 
-                                       VerticalOptions="Center" />
-
-                                <Label Text="{Binding Trainer.LastName}" 
-                                       FontFamily="OpenSansSemibold" 
-                                       VerticalOptions="Center" />
-                            </HorizontalStackLayout>
-
+                        <!-- Заголовок таблиці -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" Padding="16,12"
+                              BackgroundColor="{AppThemeBinding Light={StaticResource PageBgLight}, Dark={StaticResource PageBgDark}}">
+                            <Label Grid.Column="0" Text="ЗАНЯТТЯ"
+                                   FontFamily="OpenSansSemibold" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+                            <Label Grid.Column="1" Text="ЧАС" Margin="0,0,24,0"
+                                   FontFamily="OpenSansSemibold" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+                            <Label Grid.Column="2" Text="ДІЇ"
+                                   FontFamily="OpenSansSemibold" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
                         </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
 
-            <CollectionView.EmptyView>
-                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" Margin="0,40,0,0">
-                    <Label Text="📭" FontSize="40" HorizontalOptions="Center"/>
-                    <Label Text="Наразі розклад порожній" Style="{StaticResource SubtitleLabel}" HorizontalOptions="Center"/>
-                </VerticalStackLayout>
-            </CollectionView.EmptyView>
+                        <!-- Рядки -->
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Schedules}" Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:Schedule">
 
-        </CollectionView>
-    </VerticalStackLayout>
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="0">
+
+                                        <!-- Кольорова смужка-акцент зліва -->
+                                        <BoxView Grid.Column="0" WidthRequest="4"
+                                                 Color="{StaticResource Brand}"/>
+
+                                        <!-- Інформація про заняття -->
+                                        <VerticalStackLayout Grid.Column="1" Padding="14,12" Spacing="4">
+                                            <Label Text="{Binding Name}"
+                                                   FontFamily="OpenSansSemibold" FontSize="15"
+                                                   TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+
+                                            <HorizontalStackLayout Spacing="6">
+                                                <Border BackgroundColor="{StaticResource Accent}"
+                                                        StrokeThickness="0" StrokeShape="RoundRectangle 6"
+                                                        Padding="7,2">
+                                                    <Label Text="{Binding DayOfWeek}" FontSize="11"
+                                                           TextColor="{StaticResource White}"/>
+                                                </Border>
+                                                <Label Text="{Binding Duration, StringFormat='{0} хв'}"
+                                                       FontSize="12" VerticalOptions="Center"
+                                                       TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+                                            </HorizontalStackLayout>
+
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="👨‍🏫" FontSize="11" VerticalOptions="Center"/>
+                                                <Label Text="{Binding Trainer.LastName}" FontSize="12"
+                                                       TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"
+                                                       VerticalOptions="Center"/>
+                                                <Label Text="{Binding Trainer.FirstName}" FontSize="12"
+                                                       TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"
+                                                       VerticalOptions="Center"/>
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+
+                                        <!-- Час -->
+                                        <Label Grid.Column="2"
+                                               Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
+                                               FontFamily="OpenSansSemibold" FontSize="15"
+                                               TextColor="{StaticResource Brand}"
+                                               VerticalOptions="Center" Margin="0,0,16,0"/>
+
+                                        <!-- Кнопки дій (компактні квадратні) -->
+                                        <HorizontalStackLayout Grid.Column="3" Spacing="6"
+                                                               VerticalOptions="Center" Margin="0,0,12,0">
+                                            <Button Text="✏️"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditCommand}"
+                                                    CommandParameter="{Binding Id}"
+                                                    FontSize="14" Padding="0"
+                                                    WidthRequest="36" HeightRequest="36"
+                                                    CornerRadius="10"
+                                                    BackgroundColor="{StaticResource Brand}"/>
+                                            <Button Text="🗑"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteCommand}"
+                                                    CommandParameter="{Binding Id}"
+                                                    FontSize="14" Padding="0"
+                                                    WidthRequest="36" HeightRequest="36"
+                                                    CornerRadius="10"
+                                                    BackgroundColor="{StaticResource Danger}"/>
+                                        </HorizontalStackLayout>
+
+                                    </Grid>
+
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="60" Color="Transparent"/>
+
+            <!-- ФУТЕР -->
+            <views:AppFooter/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
