@@ -71,7 +71,11 @@ public partial class TrainerEditViewModel : BaseViewModel
             return;
         }
 
-        int.TryParse(Experience, out int exp);
+        if (!int.TryParse(Experience, out int exp) || exp < 0)
+        {
+            await _dialog.AlertAsync("Помилка", "Досвід має бути додатним числом", "OK");
+            return;
+        }
 
         if (_editing == null)
         {

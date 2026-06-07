@@ -91,9 +91,11 @@ namespace FitnessClub.ViewModels
                 await _dialog.AlertAsync("Помилка", "Оберіть тренера", "OK");
                 return;
             }
-
-            int.TryParse(Duration, out int dur);
-            if (dur <= 0) dur = 60;
+            if (!int.TryParse(Duration, out int dur) || dur <= 0)
+            {
+                await _dialog.AlertAsync("Помилка", "Тривалість має бути додатним числом", "OK");
+                return;
+            }
 
             int trainerId = _trainers[SelectedTrainerIndex].Id;
 

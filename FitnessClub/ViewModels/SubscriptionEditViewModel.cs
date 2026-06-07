@@ -79,7 +79,11 @@ public partial class SubscriptionEditViewModel : BaseViewModel
             return;
         }
 
-        double.TryParse(Price, out double priceValue);
+        if (!double.TryParse(Price, out double priceValue) || priceValue < 0)
+        {
+            await _dialog.AlertAsync("Помилка", "Ціна має бути додатним числом", "OK");
+            return;
+        }
 
         int subId;
         if (_editing == null)

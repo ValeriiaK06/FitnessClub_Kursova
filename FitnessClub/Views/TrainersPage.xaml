@@ -53,12 +53,23 @@
                                             StrokeShape="RoundRectangle 16"
                                             Stroke="{StaticResource White}"
                                             StrokeThickness="3"
-                                           HeightRequest="150"
+                                            HeightRequest="150"
                                             WidthRequest="140"
                                             HorizontalOptions="Center"
                                             Margin="0,18,0,0"
                                             Padding="0">
-                                        <Image Source="{Binding PhotoOrDefault}" Aspect="AspectFill"/>
+                                        <Grid>
+                                            <!-- Заглушка: зафарбована зона з силуетом -->
+                                            <Grid BackgroundColor="{StaticResource BrandDark}">
+                                                <Label Text="👤" FontSize="56"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"/>
+                                            </Grid>
+
+                                            <!-- Фото поверх заглушки, видно лише якщо є -->
+                                            <Image Source="{Binding Photo}" Aspect="AspectFill"
+                                                   IsVisible="{Binding HasPhoto}"/>
+                                        </Grid>
                                     </Border>
 
                                     <VerticalStackLayout Grid.Row="1" Spacing="8"

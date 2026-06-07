@@ -169,8 +169,7 @@
     <Style TargetType="Shell" ApplyToDerivedTypes="True">
         <Setter Property="Shell.BackgroundColor"
             Value="{AppThemeBinding Light={StaticResource ElevatedLight}, Dark={StaticResource ElevatedDark}}"/>
-        <Setter Property="Shell.ForegroundColor"
-            Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+        <Setter Property="Shell.ForegroundColor" Value="{StaticResource Brand}"/>
         <Setter Property="Shell.TitleColor"
             Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
         <Setter Property="Shell.NavBarHasShadow" Value="True"/>

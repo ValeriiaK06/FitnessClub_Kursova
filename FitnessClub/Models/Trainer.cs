@@ -84,8 +84,7 @@ namespace FitnessClub.Models
         }
 
         [Ignore]
-        public string PhotoOrDefault =>
-            string.IsNullOrWhiteSpace(Photo) ? "user.png" : Photo;
+        public bool HasPhoto => !string.IsNullOrWhiteSpace(Photo);
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "") =>
