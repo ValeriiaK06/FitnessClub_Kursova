@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
+             xmlns:views="clr-namespace:FitnessClub.Views"
+             x:Class="FitnessClub.Views.Details.ServiceEditPage"
+             x:DataType="vm:ServiceEditViewModel"
+             Title="">
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+            <views:AppHeader/>
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
+
+                <Label Text="{Binding Title}" Style="{StaticResource PageTitle}"/>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="14">
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Назва послуги" Style="{StaticResource FieldLabel}"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <Entry Text="{Binding Name}" Placeholder="Напр. Сауна"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <HorizontalStackLayout Spacing="12" HorizontalOptions="Start">
+                    <Button Text="💾"
+                            Command="{Binding SaveCommand}"
+                            FontSize="20" Padding="0"
+                            WidthRequest="54" HeightRequest="54"
+                            CornerRadius="14"
+                            BackgroundColor="{StaticResource Brand}"/>
+                    <Button Text="←"
+                            Command="{Binding CancelCommand}"
+                            FontSize="22" Padding="0"
+                            WidthRequest="54" HeightRequest="54"
+                            CornerRadius="14"
+                            Style="{StaticResource SecondaryButton}"/>
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+            <BoxView HeightRequest="40" Color="Transparent"/>
+            <views:AppFooter/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FitnessClub.Services;
 
 namespace FitnessClub.ViewModels
@@ -20,12 +21,13 @@ namespace FitnessClub.ViewModels
             Title = "Дашборд";
         }
 
-        public void Refresh()
+        [RelayCommand]
+        private void Load()
         {
             TrainersCount = _db.GetTrainers().Count;
             ClientsCount = _db.GetClients().Count;
             SubscriptionsCount = _db.GetSubscriptions().Count;
-            BookingsCount = _db.GetBookings().Count;
+            BookingsCount = _db.GetActiveBookingsCount();
             SchedulesCount = _db.GetSchedules().Count;
             ActiveSubsCount = _db.GetClientSubscriptions().Count(s => s.IsActive);
         }

@@ -82,7 +82,7 @@
 
                     <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Card}">
                         <VerticalStackLayout Spacing="4">
-                            <Label Text="📝 Записів" Style="{StaticResource SubtitleLabel}"/>
+                            <Label Text="📝 Активних записів" Style="{StaticResource SubtitleLabel}"/>
                             <Label Text="{Binding BookingsCount}" FontFamily="OpenSansSemibold"
                                    FontSize="30" TextColor="{StaticResource Brand}"/>
                         </VerticalStackLayout>

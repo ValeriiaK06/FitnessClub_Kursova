@@ -189,4 +189,48 @@
         <Setter Property="MinimumHeightRequest" Value="54"/>
     </Style>
 
+
+    <!-- ===================== ПЛАСТИКОВА КАРТКА ===================== -->
+
+    <!-- Золотий чип -->
+    <Style x:Key="CardChip" TargetType="Border">
+        <Setter Property="WidthRequest" Value="46"/>
+        <Setter Property="HeightRequest" Value="34"/>
+        <Setter Property="StrokeThickness" Value="0"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 7"/>
+        <Setter Property="Background">
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#F4D03F" Offset="0"/>
+                <GradientStop Color="#B8860B" Offset="1"/>
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+
+    <!-- Назва клубу на картці -->
+    <Style x:Key="CardBrand" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="TextColor" Value="{StaticResource White}"/>
+        <Setter Property="Opacity" Value="0.9"/>
+    </Style>
+
+    <!-- Назва плану (великий рельєфний текст) -->
+    <Style x:Key="CardPlanName" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="TextColor" Value="{StaticResource White}"/>
+    </Style>
+
+    <!-- Ціна як номер картки -->
+    <Style x:Key="CardNumber" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="TextColor" Value="{StaticResource White}"/>
+    </Style>
+
+    <!-- Дрібний підпис на картці -->
+    <Style x:Key="CardCaption" TargetType="Label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="TextColor" Value="{StaticResource Gray100}"/>
+    </Style>
 </ResourceDictionary>

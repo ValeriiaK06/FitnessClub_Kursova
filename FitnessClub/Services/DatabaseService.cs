@@ -11,6 +11,8 @@ namespace FitnessClub.Services
         {
 
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
+
+    
             _db = new SQLiteConnection(dbPath);
 
             CreateTables();
@@ -110,12 +112,16 @@ namespace FitnessClub.Services
             _db.Insert(new Schedule { Name = "Кардіо", DayOfWeek = "Четвер", StartTime = new TimeSpan(8, 0, 0), Duration = 45, TrainerId = 8 });
 
             // Записи клієнтів
-            _db.Insert(new ClientBooking { ClientId = 1, ScheduleId = 3, BookingDate = new DateTime(2024, 3, 25) });
-            _db.Insert(new ClientBooking { ClientId = 2, ScheduleId = 5, BookingDate = new DateTime(2024, 3, 26) });
-            _db.Insert(new ClientBooking { ClientId = 3, ScheduleId = 7, BookingDate = new DateTime(2024, 3, 27) });
-            _db.Insert(new ClientBooking { ClientId = 4, ScheduleId = 1, BookingDate = new DateTime(2024, 3, 28) });
-            _db.Insert(new ClientBooking { ClientId = 5, ScheduleId = 4, BookingDate = new DateTime(2024, 3, 29) });
-            _db.Insert(new ClientBooking { ClientId = 6, ScheduleId = 6, BookingDate = new DateTime(2024, 3, 30) });
+            // Записи клієнтів — дати обчислюються за днем заняття (майбутні, активні)
+            // Нагадування про дні занять із seed:
+            // Schedule 1 — Силове, Понеділок | 3 — Йога, Понеділок | 4 — Пілатес, Четвер
+            // 5 — Бокс, Вівторок | 6 — Кікбоксинг, П'ятниця | 7 — Зумба, Середа
+            _db.Insert(new ClientBooking { ClientId = 1, ScheduleId = 3, BookingDate = NextWeekday(DayOfWeek.Monday, 0) });
+            _db.Insert(new ClientBooking { ClientId = 2, ScheduleId = 5, BookingDate = NextWeekday(DayOfWeek.Tuesday, 0) });
+            _db.Insert(new ClientBooking { ClientId = 3, ScheduleId = 7, BookingDate = NextWeekday(DayOfWeek.Wednesday, 0) });
+            _db.Insert(new ClientBooking { ClientId = 4, ScheduleId = 1, BookingDate = NextWeekday(DayOfWeek.Monday, 1) });
+            _db.Insert(new ClientBooking { ClientId = 5, ScheduleId = 4, BookingDate = NextWeekday(DayOfWeek.Thursday, 0) });
+            _db.Insert(new ClientBooking { ClientId = 6, ScheduleId = 6, BookingDate = NextWeekday(DayOfWeek.Friday, 0) });
         }
 
         // ===== ТРЕНЕРИ =====
@@ -159,7 +165,26 @@ namespace FitnessClub.Services
         public void DeleteClient(Client client) => _db.Delete(client);
 
         // ===== ЗАПИСИ КЛІЄНТІВ =====
-        public List<ClientBooking> GetBookings() => _db.Table<ClientBooking>().ToList();
+        public List<ClientBooking> GetBookings()
+        {
+            var list = _db.Table<ClientBooking>().ToList();
+
+            foreach (var b in list)
+            {
+                var client = _db.Table<Client>().FirstOrDefault(c => c.Id == b.ClientId);
+                b.ClientName = client != null ? $"{client.LastName} {client.FirstName}" : "—";
+
+                var schedule = _db.Table<Schedule>().FirstOrDefault(s => s.Id == b.ScheduleId);
+                b.ScheduleName = schedule?.Name ?? "—";
+                b.DayOfWeek = schedule?.DayOfWeek ?? "";
+            }
+
+            return list;
+        }
+
+        // Кількість активних (майбутніх) записів — для дашборда
+        public int GetActiveBookingsCount() =>
+            _db.Table<ClientBooking>().ToList().Count(b => b.BookingDate.Date >= DateTime.Today);
         public ClientBooking GetBooking(int id) => _db.Find<ClientBooking>(id);
         public void AddBooking(ClientBooking booking) => _db.Insert(booking);
         public void UpdateBooking(ClientBooking booking) => _db.Update(booking);
@@ -220,10 +245,91 @@ namespace FitnessClub.Services
         public void AddHistory(SubscriptionHistory h) => _db.Insert(h);
 
 
+        // ===== АБОНЕМЕНТИ =====
+        public List<Subscription> GetSubscriptions()
+        {
+            var subs = _db.Table<Subscription>().ToList();
+
+            foreach (var sub in subs)
+            {
+                // Знаходимо послуги цього абонемента
+                var links = _db.Table<SubscriptionService>()
+                    .Where(ss => ss.SubscriptionId == sub.Id).ToList();
+
+                var names = new List<string>();
+                foreach (var link in links)
+                {
+                    var service = _db.Table<Service>().FirstOrDefault(s => s.Id == link.ServiceId);
+                    if (service != null) names.Add(service.Name);
+                }
+
+                sub.ServicesList = names.Count > 0
+            ? string.Join("\n", names.Select(n => "✔ " + n))
+            : "Без послуг";
+            }
+
+            return subs;
+        }
+        public Subscription GetSubscription(int id) => _db.Find<Subscription>(id);
+        public void AddSubscription(Subscription sub) => _db.Insert(sub);
+        public void UpdateSubscription(Subscription sub) => _db.Update(sub);
+        public void DeleteSubscription(Subscription sub)
+        {
+            // Видаляємо абонемент і всі його зв'язки з послугами
+            var links = _db.Table<SubscriptionService>()
+                .Where(ss => ss.SubscriptionId == sub.Id).ToList();
+            foreach (var link in links)
+                _db.Delete(link);
+            _db.Delete(sub);
+        }
+
+        // Зв'язки абонемент↔послуги
+        public List<int> GetServiceIdsForSubscription(int subId) =>
+            _db.Table<SubscriptionService>()
+                .Where(ss => ss.SubscriptionId == subId)
+                .Select(ss => ss.ServiceId).ToList();
+
+        public void SetSubscriptionServices(int subId, List<int> serviceIds)
+        {
+            // Видаляємо старі зв'язки
+            var old = _db.Table<SubscriptionService>()
+                .Where(ss => ss.SubscriptionId == subId).ToList();
+            foreach (var link in old)
+                _db.Delete(link);
+
+            // Додаємо нові
+            foreach (var serviceId in serviceIds)
+                _db.Insert(new SubscriptionService { SubscriptionId = subId, ServiceId = serviceId });
+        }
+
+
+        public Service GetService(int id) => _db.Find<Service>(id);
+        public void AddService(Service service) => _db.Insert(service);
+        public void UpdateService(Service service) => _db.Update(service);
+        public void DeleteService(Service service)
+        {
+            // Прибираємо зв'язки цієї послуги з абонементами
+            var links = _db.Table<SubscriptionService>()
+                .Where(ss => ss.ServiceId == service.Id).ToList();
+            foreach (var link in links)
+                _db.Delete(link);
+            _db.Delete(service);
+        }
+
+
         // ===== ДОПОМІЖНІ (тільки читання) =====
-        public List<Subscription> GetSubscriptions() => _db.Table<Subscription>().ToList();
+
         public List<Service> GetServices() => _db.Table<Service>().ToList();
-      
-       
+
+        // Найближча майбутня дата заданого дня тижня (+ зсув тижнів)
+        private DateTime NextWeekday(DayOfWeek day, int weeksAhead = 0)
+        {
+            var date = DateTime.Today;
+            while (date.DayOfWeek != day)
+                date = date.AddDays(1);
+            return date.AddDays(weeksAhead * 7);
+        }
+
+
     }
 }

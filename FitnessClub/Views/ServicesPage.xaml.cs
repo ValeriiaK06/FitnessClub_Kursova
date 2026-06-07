@@ -1,5 +1,21 @@
-﻿namespace FitnessClub.Views;
+﻿using FitnessClub.ViewModels;
+
+namespace FitnessClub.Views;
+
 public partial class ServicesPage : ContentPage
 {
-    public ServicesPage() => InitializeComponent();
+    private readonly ServicesViewModel _vm;
+
+    public ServicesPage(ServicesViewModel vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+        _vm = vm;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _vm.LoadCommand.Execute(null);
+    }
 }

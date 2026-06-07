@@ -38,6 +38,15 @@ namespace FitnessClub.Models
             set { if (pricePerMonth != value) { pricePerMonth = value; OnPropertyChanged(); } }
         }
 
+        private string servicesList = string.Empty;
+
+        [Ignore]
+        public string ServicesList
+        {
+            get => servicesList;
+            set { if (servicesList != value) { servicesList = value; OnPropertyChanged(); } }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

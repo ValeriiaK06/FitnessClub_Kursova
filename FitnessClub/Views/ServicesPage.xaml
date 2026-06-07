@@ -1,10 +1,111 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FitnessClub.Models"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
+             xmlns:views="clr-namespace:FitnessClub.Views"
              x:Class="FitnessClub.Views.ServicesPage"
-              Title="">
-    <VerticalStackLayout Padding="20" Spacing="8">
-        <Label Text="🛎️ Послуги" Style="{StaticResource PageTitle}"/>
-        <Label Text="Розділ у розробці" Style="{StaticResource SubtitleLabel}"/>
-    </VerticalStackLayout>
+             x:DataType="vm:ServicesViewModel"
+             x:Name="PageRoot"
+             Title="">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <views:AppHeader/>
+
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
+
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="🛎️ Послуги" Style="{StaticResource PageTitle}"/>
+                        <Label Text="Перелік послуг клубу" Style="{StaticResource SubtitleLabel}"/>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="1" Text="＋"
+                            Command="{Binding AddCommand}"
+                            FontSize="22" FontAttributes="Bold"
+                            WidthRequest="48" HeightRequest="48"
+                            Padding="0" CornerRadius="14"
+                            VerticalOptions="Center"/>
+                </Grid>
+
+                <!-- ТАБЛИЦЯ -->
+                <Border Style="{StaticResource Card}" Padding="0"
+                        MaximumWidthRequest="1100" HorizontalOptions="Center">
+                    <VerticalStackLayout Spacing="0">
+
+                        <!-- Заголовок таблиці -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="16,12"
+                              BackgroundColor="{AppThemeBinding Light={StaticResource PageBgLight}, Dark={StaticResource PageBgDark}}">
+                            <Label Grid.Column="0" Text="№" Margin="0,0,16,0"
+                                   FontFamily="OpenSansSemibold" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+                            <Label Grid.Column="1" Text="НАЗВА ПОСЛУГИ"
+                                   FontFamily="OpenSansSemibold" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+                            <Label Grid.Column="2" Text="ДІЇ"
+                                   FontFamily="OpenSansSemibold" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
+                        </Grid>
+
+                        <!-- Рядки -->
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Services}" Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:Service">
+
+                                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="16,12"
+                                          ColumnSpacing="12">
+
+                                        <!-- Іконка-кружок з номером/значком -->
+                                        <Border Grid.Column="0"
+                                                BackgroundColor="{StaticResource Accent}"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                                                WidthRequest="36" HeightRequest="36"
+                                                VerticalOptions="Center">
+                                            <Label Text="🛎️" FontSize="16"
+                                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                                        </Border>
+
+                                        <!-- Назва -->
+                                        <Label Grid.Column="1" Text="{Binding Name}"
+                                               FontSize="15"
+                                               VerticalOptions="Center"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+
+                                        <!-- Кнопки -->
+                                        <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                            <Button Text="✏️"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditCommand}"
+                                                    CommandParameter="{Binding Id}"
+                                                    FontSize="13" Padding="0"
+                                                    WidthRequest="34" HeightRequest="34"
+                                                    CornerRadius="10"
+                                                    BackgroundColor="{StaticResource Brand}"/>
+                                            <Button Text="🗑"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteCommand}"
+                                                    CommandParameter="{Binding Id}"
+                                                    FontSize="13" Padding="0"
+                                                    WidthRequest="34" HeightRequest="34"
+                                                    CornerRadius="10"
+                                                    BackgroundColor="{StaticResource Danger}"/>
+                                        </HorizontalStackLayout>
+
+                                    </Grid>
+
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="60" Color="Transparent"/>
+
+            <views:AppFooter/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

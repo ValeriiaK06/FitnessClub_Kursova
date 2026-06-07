@@ -1,16 +1,140 @@
-﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FitnessClub.Models"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
              xmlns:views="clr-namespace:FitnessClub.Views"
              x:Class="FitnessClub.Views.SubscriptionsPage"
+             x:DataType="vm:SubscriptionsViewModel"
+             x:Name="PageRoot"
              Title="">
-	<Grid RowDefinitions="*,Auto">
-		<ScrollView Grid.Row="0">
-			<VerticalStackLayout Padding="20" Spacing="8">
-				<Label Text="💳 Абонементи" Style="{StaticResource PageTitle}"/>
-				<Label Text="Розділ у розробці" Style="{StaticResource SubtitleLabel}"/>
-			</VerticalStackLayout>
-		</ScrollView>
 
-		<views:AppFooter Grid.Row="1"/>
-	</Grid>
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <views:AppHeader/>
+
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
+
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="💳 Абонементи" Style="{StaticResource PageTitle}"/>
+                        <Label Text="Тарифні плани клубу" Style="{StaticResource SubtitleLabel}"/>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="1" Text="＋"
+                            Command="{Binding AddCommand}"
+                            FontSize="22" FontAttributes="Bold"
+                            WidthRequest="48" HeightRequest="48"
+                            Padding="0" CornerRadius="14"
+                            VerticalOptions="Center"/>
+                </Grid>
+
+                <FlexLayout BindableLayout.ItemsSource="{Binding Subscriptions}"
+                            Wrap="Wrap" JustifyContent="Start" AlignItems="Start">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Subscription">
+
+                            <!-- ПЛАСТИКОВА КАРТКА -->
+                            <Border StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 24"
+                                    FlexLayout.Basis="320"
+                                    FlexLayout.Shrink="0"
+                                    FlexLayout.Grow="1"
+                                    Margin="7"
+                                    HeightRequest="380">
+                                <Border.Shadow>
+                                    <Shadow Brush="{StaticResource Black}" Offset="0,6" Radius="18" Opacity="0.25"/>
+                                </Border.Shadow>
+
+                                <Grid>
+                                    <!-- Градієнтний фон картки -->
+                                    <Grid.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="{StaticResource BrandDark}" Offset="0"/>
+                                            <GradientStop Color="{StaticResource Brand}" Offset="0.55"/>
+                                            <GradientStop Color="{StaticResource Accent}" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+
+                                    <!-- Глянцевий відблиск -->
+                                    <Border StrokeThickness="0" InputTransparent="True">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#40FFFFFF" Offset="0"/>
+                                                <GradientStop Color="#00FFFFFF" Offset="0.45"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                    </Border>
+
+                                    <!-- Вміст картки -->
+                                    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="22,20">
+
+                                        <!-- Верх: чип + бренд -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
+                                            <Border Grid.Column="0" Style="{StaticResource CardChip}"
+                                                    HorizontalOptions="Start"/>
+                                            <Label Grid.Column="2" Text="💪 FITNESSCLUB"
+                                                   Style="{StaticResource CardBrand}"
+                                                   VerticalOptions="Center"/>
+                                        </Grid>
+
+                                        <!-- Назва плану -->
+                                        <Label Grid.Row="1" Text="{Binding Name}"
+                                               Style="{StaticResource CardPlanName}"
+                                               Margin="0,18,0,0"/>
+
+                                        <!-- Опис + послуги -->
+                                        <VerticalStackLayout Grid.Row="2" Spacing="8" Margin="0,12,0,0">
+                                            <Label Text="{Binding Description}"
+                                                   Style="{StaticResource CardCaption}"/>
+                                            <Label Text="{Binding ServicesList}"
+                                                   FontSize="16"
+                                                   LineBreakMode="WordWrap"
+                                                   TextColor="{StaticResource White}"/>
+                                        </VerticalStackLayout>
+
+                                        <!-- Низ: ціна + кнопки -->
+                                        <Grid Grid.Row="3" ColumnDefinitions="*,Auto" VerticalOptions="End">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="0">
+                                                <Label Text="НА МІСЯЦЬ" Style="{StaticResource CardCaption}"/>
+                                                <Label Text="{Binding PricePerMonth, StringFormat='{0:0} ₴'}"
+                                                       Style="{StaticResource CardNumber}"/>
+                                            </VerticalStackLayout>
+
+                                            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="End">
+                                                <Button Text="✏️"
+                                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditCommand}"
+                                                        CommandParameter="{Binding Id}"
+                                                        FontSize="14" Padding="0"
+                                                        WidthRequest="40" HeightRequest="40"
+                                                        CornerRadius="12"
+                                                        BackgroundColor="{StaticResource White}"
+                                                        TextColor="{StaticResource Brand}"/>
+                                                <Button Text="🗑"
+                                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteCommand}"
+                                                        CommandParameter="{Binding Id}"
+                                                        FontSize="14" Padding="0"
+                                                        WidthRequest="40" HeightRequest="40"
+                                                        CornerRadius="12"
+                                                        BackgroundColor="{StaticResource Danger}"/>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="60" Color="Transparent"/>
+
+            <views:AppFooter/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

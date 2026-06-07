@@ -32,7 +32,18 @@ namespace FitnessClub.Models
         public DateTime ExpiryDate
         {
             get => expiryDate;
-            set { if (expiryDate != value) { expiryDate = value; OnPropertyChanged(); } }
+            set
+            {
+                if (expiryDate != value)
+                {
+                    expiryDate = value;
+                    OnPropertyChanged(); 
+
+               
+                    OnPropertyChanged(nameof(IsExpired));  
+                    OnPropertyChanged(nameof(StatusText)); 
+                }
+            }
         }
 
         [Column("статус")]

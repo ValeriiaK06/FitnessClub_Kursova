@@ -13,6 +13,9 @@ namespace FitnessClub
             Routing.RegisterRoute("traineredit", typeof(FitnessClub.Views.Details.TrainerEditPage));
             Routing.RegisterRoute("clientedit", typeof(FitnessClub.Views.Details.ClientEditPage));
             Routing.RegisterRoute("clientsubedit", typeof(FitnessClub.Views.Details.ClientSubEditPage));
+            Routing.RegisterRoute("subscriptionedit", typeof(FitnessClub.Views.Details.SubscriptionEditPage));
+            Routing.RegisterRoute("serviceedit", typeof(FitnessClub.Views.Details.ServiceEditPage));
+            Routing.RegisterRoute("bookingedit", typeof(FitnessClub.Views.Details.BookingEditPage));
 
             // Маршрути edit-сторінок (зареєструємо по мірі створення розділів)
             //Routing.RegisterRoute("traineredit", typeof(TrainerEditPage));

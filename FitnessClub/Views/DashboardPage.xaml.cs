@@ -16,6 +16,6 @@ public partial class DashboardPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _vm.Refresh();
+        _vm.LoadCommand.Execute(null);
     }
 }
