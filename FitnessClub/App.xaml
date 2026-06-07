@@ -11,6 +11,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <converters:StatusColorConverter x:Key="StatusColorConverter"/>
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
             <converters:ActiveColorConverter x:Key="ActiveColorConverter"/>
 
         </ResourceDictionary>

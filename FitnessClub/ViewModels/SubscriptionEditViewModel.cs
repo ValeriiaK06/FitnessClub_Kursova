@@ -11,6 +11,8 @@ namespace FitnessClub.ViewModels;
 public partial class SubscriptionEditViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
     private Subscription? _editing;
 
     [ObservableProperty] private string name = string.Empty;
@@ -20,9 +22,11 @@ public partial class SubscriptionEditViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<ServiceSelectionItem> services = new();
 
-    public SubscriptionEditViewModel(DatabaseService db)
+    public SubscriptionEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
     }
 
     private int _subscriptionId;
@@ -71,7 +75,7 @@ public partial class SubscriptionEditViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
-            await Shell.Current.DisplayAlert("Помилка", "Введіть назву абонемента", "OK");
+            await _dialog.AlertAsync("Помилка", "Введіть назву абонемента", "OK");
             return;
         }
 
@@ -98,16 +102,12 @@ public partial class SubscriptionEditViewModel : BaseViewModel
             subId = _editing.Id;
         }
 
-        // Зберігаємо обрані послуги
         var selectedIds = Services.Where(s => s.IsSelected).Select(s => s.ServiceId).ToList();
         _db.SetSubscriptionServices(subId, selectedIds);
 
-        await Shell.Current.GoToAsync("..");
+        await _nav.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await _nav.GoBackAsync();
 }

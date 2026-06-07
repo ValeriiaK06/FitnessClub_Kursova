@@ -32,7 +32,7 @@
 
                 <!-- ТАБЛИЦЯ -->
                 <Border Style="{StaticResource Card}" Padding="0"
-                        MaximumWidthRequest="1100" HorizontalOptions="Center">
+                        MaximumWidthRequest="1100" HorizontalOptions="Fill">
                     <VerticalStackLayout Spacing="0">
 
                         <!-- Заголовок таблиці -->

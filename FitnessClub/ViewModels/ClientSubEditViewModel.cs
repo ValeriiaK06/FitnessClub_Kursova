@@ -10,6 +10,8 @@ namespace FitnessClub.ViewModels;
 public partial class ClientSubEditViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
     private ClientSubscription? _editing;
     private List<Client> _clients = new();
     private List<Subscription> _subs = new();
@@ -21,9 +23,11 @@ public partial class ClientSubEditViewModel : BaseViewModel
     [ObservableProperty] private DateTime purchaseDate = DateTime.Today;
     [ObservableProperty] private DateTime expiryDate = DateTime.Today.AddMonths(1);
 
-    public ClientSubEditViewModel(DatabaseService db)
+    public ClientSubEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
     }
 
     private int _clientSubId;
@@ -69,12 +73,12 @@ public partial class ClientSubEditViewModel : BaseViewModel
     {
         if (SelectedClientIndex < 0)
         {
-            await Shell.Current.DisplayAlert("Помилка", "Оберіть клієнта", "OK");
+            await _dialog.AlertAsync("Помилка", "Оберіть клієнта", "OK");
             return;
         }
         if (SelectedPlanIndex < 0)
         {
-            await Shell.Current.DisplayAlert("Помилка", "Оберіть абонемент", "OK");
+            await _dialog.AlertAsync("Помилка", "Оберіть абонемент", "OK");
             return;
         }
 
@@ -88,7 +92,7 @@ public partial class ClientSubEditViewModel : BaseViewModel
 
         if (existing != null && (_editing == null || existing.Id != _editing.Id))
         {
-            await Shell.Current.DisplayAlert(
+            await _dialog.AlertAsync(
                 "Помилка",
                 "У цього клієнта вже є абонемент. Один клієнт може мати лише один абонемент — відредагуйте наявний.",
                 "OK");
@@ -115,7 +119,6 @@ public partial class ClientSubEditViewModel : BaseViewModel
         }
         else
         {
-            // Запам'ятовуємо старі значення ДО перезапису
             var changes = new List<string>();
 
             if (_editing.SubscriptionId != subId)
@@ -128,7 +131,6 @@ public partial class ClientSubEditViewModel : BaseViewModel
             if (_editing.PurchaseDate.Date != PurchaseDate.Date)
                 changes.Add($"придбано: {_editing.PurchaseDate:dd.MM.yyyy} → {PurchaseDate:dd.MM.yyyy}");
 
-            // Застосовуємо зміни
             _editing.ClientId = clientId;
             _editing.SubscriptionId = subId;
             _editing.PurchaseDate = PurchaseDate;
@@ -137,12 +139,9 @@ public partial class ClientSubEditViewModel : BaseViewModel
             _db.UpdateClientSubscription(_editing);
 
             actionType = "Оновлено";
-            details = changes.Count > 0
-                ? string.Join("; ", changes)
-                : "Без змін у даних";
+            details = changes.Count > 0 ? string.Join("; ", changes) : "Без змін у даних";
         }
 
-        // Запис у історію
         _db.AddHistory(new SubscriptionHistory
         {
             ClientName = clientName,
@@ -154,12 +153,9 @@ public partial class ClientSubEditViewModel : BaseViewModel
             Details = details
         });
 
-        await Shell.Current.GoToAsync("..");
+        await _nav.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await _nav.GoBackAsync();
 }

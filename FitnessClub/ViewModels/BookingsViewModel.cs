@@ -9,8 +9,8 @@ namespace FitnessClub.ViewModels;
 public partial class BookingsViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
-
-    // Повний список (джерело для фільтра)
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
     private List<ClientBooking> _all = new();
 
     [ObservableProperty]
@@ -19,9 +19,11 @@ public partial class BookingsViewModel : BaseViewModel
     [ObservableProperty]
     private string searchText = string.Empty;
 
-    public BookingsViewModel(DatabaseService db)
+    public BookingsViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
         Title = "Записи клієнтів";
     }
 
@@ -55,29 +57,17 @@ public partial class BookingsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task AddAsync()
-    {
-        await Shell.Current.GoToAsync("bookingedit?booking_id=0");
-    }
+    private async Task AddAsync() => await _nav.GoToAsync("bookingedit?booking_id=0");
 
     [RelayCommand]
-    private async Task EditAsync(int id)
-    {
-        await Shell.Current.GoToAsync($"bookingedit?booking_id={id}");
-    }
+    private async Task EditAsync(int id) => await _nav.GoToAsync($"bookingedit?booking_id={id}");
 
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
-        bool confirm = await Shell.Current.DisplayAlert(
-            "Видалення", "Видалити цей запис?", "Так", "Скасувати");
+        bool confirm = await _dialog.ConfirmAsync("Видалення", "Видалити цей запис?", "Так", "Скасувати");
         if (!confirm) return;
-
         var item = _db.GetBooking(id);
-        if (item != null)
-        {
-            _db.DeleteBooking(item);
-            Load();
-        }
+        if (item != null) { _db.DeleteBooking(item); Load(); }
     }
 }

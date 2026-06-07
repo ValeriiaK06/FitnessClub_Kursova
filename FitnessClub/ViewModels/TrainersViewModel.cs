@@ -9,13 +9,17 @@ namespace FitnessClub.ViewModels;
 public partial class TrainersViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
 
     [ObservableProperty]
     private ObservableCollection<Trainer> trainers = new();
 
-    public TrainersViewModel(DatabaseService db)
+    public TrainersViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
         Title = "Тренери";
     }
 
@@ -24,34 +28,21 @@ public partial class TrainersViewModel : BaseViewModel
     {
         var data = _db.GetTrainers();
         Trainers.Clear();
-        foreach (var t in data)
-            Trainers.Add(t);
+        foreach (var t in data) Trainers.Add(t);
     }
 
     [RelayCommand]
-    private async Task AddAsync()
-    {
-        await Shell.Current.GoToAsync("traineredit?trainer_id=0");
-    }
+    private async Task AddAsync() => await _nav.GoToAsync("traineredit?trainer_id=0");
 
     [RelayCommand]
-    private async Task EditAsync(int id)
-    {
-        await Shell.Current.GoToAsync($"traineredit?trainer_id={id}");
-    }
+    private async Task EditAsync(int id) => await _nav.GoToAsync($"traineredit?trainer_id={id}");
 
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
-        bool confirm = await Shell.Current.DisplayAlert(
-            "Видалення", "Видалити цього тренера?", "Так", "Скасувати");
+        bool confirm = await _dialog.ConfirmAsync("Видалення", "Видалити цього тренера?", "Так", "Скасувати");
         if (!confirm) return;
-
         var item = _db.GetTrainer(id);
-        if (item != null)
-        {
-            _db.DeleteTrainer(item);
-            Load();
-        }
+        if (item != null) { _db.DeleteTrainer(item); Load(); }
     }
 }

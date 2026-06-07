@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using FitnessClub.Models;
 using FitnessClub.Services;
-using static Microsoft.Maui.ApplicationModel.Permissions;
+
 
 namespace FitnessClub.ViewModels;
 
@@ -10,6 +10,8 @@ namespace FitnessClub.ViewModels;
 public partial class TrainerEditViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
     private Trainer? _editing;
 
     [ObservableProperty] private string lastName = string.Empty;
@@ -21,9 +23,11 @@ public partial class TrainerEditViewModel : BaseViewModel
     [ObservableProperty] private string phone = string.Empty;
     [ObservableProperty] private string email = string.Empty;
 
-    public TrainerEditViewModel(DatabaseService db)
+    public TrainerEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
     }
 
     private int _trainerId;
@@ -63,7 +67,7 @@ public partial class TrainerEditViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(LastName) || string.IsNullOrWhiteSpace(FirstName))
         {
-            await Shell.Current.DisplayAlert("Помилка", "Прізвище та ім'я обов'язкові", "OK");
+            await _dialog.AlertAsync("Помилка", "Прізвище та ім'я обов'язкові", "OK");
             return;
         }
 
@@ -96,12 +100,9 @@ public partial class TrainerEditViewModel : BaseViewModel
             _db.UpdateTrainer(_editing);
         }
 
-        await Shell.Current.GoToAsync("..");
+        await _nav.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await _nav.GoBackAsync();
 }

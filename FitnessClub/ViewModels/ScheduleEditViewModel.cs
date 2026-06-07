@@ -11,6 +11,8 @@ namespace FitnessClub.ViewModels
     public partial class ScheduleEditViewModel : BaseViewModel
     {
         private readonly DatabaseService _db;
+        private readonly INavigationService _nav;
+        private readonly IDialogService _dialog;
         private Schedule? _editing;
         private List<Trainer> _trainers = new();
 
@@ -29,9 +31,11 @@ namespace FitnessClub.ViewModels
 
         [ObservableProperty] private ObservableCollection<string> trainerNames = new();
 
-        public ScheduleEditViewModel(DatabaseService db)
+        public ScheduleEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
         {
             _db = db;
+            _nav = nav;
+            _dialog = dialog;
         }
 
         // Отримуємо id через QueryProperty
@@ -74,17 +78,17 @@ namespace FitnessClub.ViewModels
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                await Shell.Current.DisplayAlert("Помилка", "Введіть назву заняття", "OK");
+                await _dialog.AlertAsync("Помилка", "Введіть назву заняття", "OK");
                 return;
             }
             if (string.IsNullOrWhiteSpace(SelectedDay))
             {
-                await Shell.Current.DisplayAlert("Помилка", "Оберіть день тижня", "OK");
+                await _dialog.AlertAsync("Помилка", "Оберіть день тижня", "OK");
                 return;
             }
             if (SelectedTrainerIndex < 0)
             {
-                await Shell.Current.DisplayAlert("Помилка", "Оберіть тренера", "OK");
+                await _dialog.AlertAsync("Помилка", "Оберіть тренера", "OK");
                 return;
             }
 
@@ -114,13 +118,13 @@ namespace FitnessClub.ViewModels
                 _db.UpdateSchedule(_editing);
             }
 
-            await Shell.Current.GoToAsync("..");
+            await _nav.GoBackAsync();
         }
 
         [RelayCommand]
         private async Task CancelAsync()
-        {
-            await Shell.Current.GoToAsync("..");
-        }
+            => await _nav.GoBackAsync();
+
+       
     }
 }

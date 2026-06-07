@@ -83,6 +83,10 @@ namespace FitnessClub.Models
             set { if (email != value) { email = value; OnPropertyChanged(); } }
         }
 
+        [Ignore]
+        public string PhotoOrDefault =>
+            string.IsNullOrWhiteSpace(Photo) ? "user.png" : Photo;
+
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

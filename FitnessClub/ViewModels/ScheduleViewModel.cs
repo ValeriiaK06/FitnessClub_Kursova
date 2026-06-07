@@ -9,14 +9,17 @@ namespace FitnessClub.ViewModels;
 public partial class ScheduleViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
 
     [ObservableProperty]
     private ObservableCollection<Schedule> schedules = new();
 
-    // DI передає той самий singleton DatabaseService
-    public ScheduleViewModel(DatabaseService db)
+    public ScheduleViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
         Title = "Розклад";
     }
 
@@ -31,20 +34,16 @@ public partial class ScheduleViewModel : BaseViewModel
 
     [RelayCommand]
     private async Task AddAsync()
-    {
-        await Shell.Current.GoToAsync("scheduleedit?schedule_id=0");
-    }
+        => await _nav.GoToAsync("scheduleedit?schedule_id=0");
 
     [RelayCommand]
     private async Task EditAsync(int id)
-    {
-        await Shell.Current.GoToAsync($"scheduleedit?schedule_id={id}");
-    }
+        => await _nav.GoToAsync($"scheduleedit?schedule_id={id}");
 
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
-        bool confirm = await Shell.Current.DisplayAlert(
+        bool confirm = await _dialog.ConfirmAsync(
             "Видалення", "Видалити це заняття з розкладу?", "Так", "Скасувати");
         if (!confirm) return;
 

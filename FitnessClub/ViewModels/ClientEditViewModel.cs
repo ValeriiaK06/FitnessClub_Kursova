@@ -9,6 +9,8 @@ namespace FitnessClub.ViewModels;
 public partial class ClientEditViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
     private Client? _editing;
 
     [ObservableProperty] private string lastName = string.Empty;
@@ -19,9 +21,11 @@ public partial class ClientEditViewModel : BaseViewModel
     [ObservableProperty] private string email = string.Empty;
     [ObservableProperty] private DateTime registrationDate = DateTime.Today;
 
-    public ClientEditViewModel(DatabaseService db)
+    public ClientEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
     }
 
     private int _clientId;
@@ -62,7 +66,7 @@ public partial class ClientEditViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(LastName) || string.IsNullOrWhiteSpace(FirstName))
         {
-            await Shell.Current.DisplayAlert("Помилка", "Прізвище та ім'я обов'язкові", "OK");
+            await _dialog.AlertAsync("Помилка", "Прізвище та ім'я обов'язкові", "OK");
             return;
         }
 
@@ -91,12 +95,9 @@ public partial class ClientEditViewModel : BaseViewModel
             _db.UpdateClient(_editing);
         }
 
-        await Shell.Current.GoToAsync("..");
+        await _nav.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await _nav.GoBackAsync();
 }

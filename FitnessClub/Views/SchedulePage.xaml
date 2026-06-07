@@ -43,10 +43,10 @@
                             <Label Grid.Column="0" Text="ЗАНЯТТЯ"
                                    FontFamily="OpenSansSemibold" FontSize="11"
                                    TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
-                            <Label Grid.Column="1" Text="ЧАС" Margin="0,0,24,0"
+                            <Label Grid.Column="1"  Margin="0,0,24,0"
                                    FontFamily="OpenSansSemibold" FontSize="11"
                                    TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
-                            <Label Grid.Column="2" Text="ДІЇ"
+                            <Label Grid.Column="2" 
                                    FontFamily="OpenSansSemibold" FontSize="11"
                                    TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
                         </Grid>

@@ -8,10 +8,10 @@
     <ScrollView>
         <VerticalStackLayout Spacing="0">
 
-            <!-- ШАПКА (скролиться разом зі сторінкою) -->
+            <!-- ШАПКА -->
             <views:AppHeader/>
 
-            <!-- БАНЕР впритул до країв і до шапки -->
+            <!-- КАРТИНКА-БАНЕР впритул -->
             <Image Source="banner.jpg"
                    Aspect="AspectFill"
                    HeightRequest="180"/>
@@ -19,19 +19,73 @@
             <!-- ОСНОВНИЙ КОНТЕНТ -->
             <VerticalStackLayout Padding="20,20,20,0" Spacing="20">
 
+                <!-- БАНЕР з ім'ям адміністратора -->
                 <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" Padding="0">
-                    <Grid HeightRequest="140">
+                    <Grid>
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="{StaticResource Brand}" Offset="0"/>
                                 <GradientStop Color="{StaticResource Accent}" Offset="1"/>
                             </LinearGradientBrush>
                         </Grid.Background>
-                        <VerticalStackLayout Padding="24" VerticalOptions="Center" Spacing="6">
-                            <Label Text="FitnessClub Admin" FontFamily="OpenSansSemibold"
-                                   FontSize="22" TextColor="{StaticResource White}"/>
-                            <Label Text="Керуйте тренерами, клієнтами та розкладом в одному місці"
-                                   FontSize="13" TextColor="{StaticResource Gray100}"/>
+
+                        <VerticalStackLayout Padding="24" Spacing="10">
+
+                            <!-- Звичайний режим -->
+                            <Grid ColumnDefinitions="*,Auto"
+                                  IsVisible="{Binding IsEditingName, Converter={StaticResource InvertBoolConverter}}">
+                                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                    <Label Text="Вітаємо 👋" FontSize="13"
+                                           TextColor="{StaticResource Gray100}"/>
+                                    <Label Text="{Binding AdminName}"
+                                           FontFamily="OpenSansSemibold" FontSize="24"
+                                           TextColor="{StaticResource White}"/>
+                                    <Label Text="Панель адміністратора FitnessClub"
+                                           FontSize="12" TextColor="{StaticResource Gray100}"/>
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="1" Text="✏️"
+                                        Command="{Binding StartEditNameCommand}"
+                                        FontSize="16" Padding="0"
+                                        WidthRequest="42" HeightRequest="42"
+                                        CornerRadius="12"
+                                        VerticalOptions="Center"
+                                        BackgroundColor="{StaticResource White}"
+                                        TextColor="{StaticResource Brand}"/>
+                            </Grid>
+
+                            <!-- Режим редагування -->
+                            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsEditingName}">
+                                <Label Text="Введіть ім'я адміністратора" FontSize="13"
+                                       TextColor="{StaticResource White}"/>
+
+                                <Border BackgroundColor="{StaticResource White}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="12,0">
+                                    <Entry Text="{Binding EditNameText}"
+                                           Placeholder="Ім'я"
+                                           TextColor="{StaticResource Gray900}"
+                                           PlaceholderColor="{StaticResource Gray500}"/>
+                                </Border>
+
+                                <HorizontalStackLayout Spacing="8">
+                                    <Button Text="💾 Зберегти"
+                                            Command="{Binding SaveNameCommand}"
+                                            FontSize="14" HeightRequest="42"
+                                            CornerRadius="12"
+                                            BackgroundColor="{StaticResource White}"
+                                            TextColor="{StaticResource Brand}"/>
+                                    <Button Text="Скасувати"
+                                            Command="{Binding CancelEditNameCommand}"
+                                            FontSize="14" HeightRequest="42"
+                                            CornerRadius="12"
+                                            BackgroundColor="Transparent"
+                                            TextColor="{StaticResource White}"
+                                            BorderColor="{StaticResource White}"
+                                            BorderWidth="1"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
@@ -90,7 +144,7 @@
 
                 </Grid>
 
-            </VerticalStackLayout> 
+            </VerticalStackLayout>
 
             <!-- ВІЛЬНИЙ ПРОСТІР перед футером -->
             <BoxView HeightRequest="100" Color="Transparent"/>

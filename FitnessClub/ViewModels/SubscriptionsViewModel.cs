@@ -9,13 +9,17 @@ namespace FitnessClub.ViewModels;
 public partial class SubscriptionsViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
 
     [ObservableProperty]
     private ObservableCollection<Subscription> subscriptions = new();
 
-    public SubscriptionsViewModel(DatabaseService db)
+    public SubscriptionsViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
         Title = "Абонементи";
     }
 
@@ -24,34 +28,21 @@ public partial class SubscriptionsViewModel : BaseViewModel
     {
         var data = _db.GetSubscriptions();
         Subscriptions.Clear();
-        foreach (var s in data)
-            Subscriptions.Add(s);
+        foreach (var s in data) Subscriptions.Add(s);
     }
 
     [RelayCommand]
-    private async Task AddAsync()
-    {
-        await Shell.Current.GoToAsync("subscriptionedit?subscription_id=0");
-    }
+    private async Task AddAsync() => await _nav.GoToAsync("subscriptionedit?subscription_id=0");
 
     [RelayCommand]
-    private async Task EditAsync(int id)
-    {
-        await Shell.Current.GoToAsync($"subscriptionedit?subscription_id={id}");
-    }
+    private async Task EditAsync(int id) => await _nav.GoToAsync($"subscriptionedit?subscription_id={id}");
 
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
-        bool confirm = await Shell.Current.DisplayAlert(
-            "Видалення", "Видалити цей абонемент?", "Так", "Скасувати");
+        bool confirm = await _dialog.ConfirmAsync("Видалення", "Видалити цей абонемент?", "Так", "Скасувати");
         if (!confirm) return;
-
         var item = _db.GetSubscription(id);
-        if (item != null)
-        {
-            _db.DeleteSubscription(item);
-            Load();
-        }
+        if (item != null) { _db.DeleteSubscription(item); Load(); }
     }
 }

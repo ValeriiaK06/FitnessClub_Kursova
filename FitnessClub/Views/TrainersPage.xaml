@@ -58,7 +58,7 @@
                                             HorizontalOptions="Center"
                                             Margin="0,18,0,0"
                                             Padding="0">
-                                        <Image Source="{Binding Photo}" Aspect="AspectFill"/>
+                                        <Image Source="{Binding PhotoOrDefault}" Aspect="AspectFill"/>
                                     </Border>
 
                                     <VerticalStackLayout Grid.Row="1" Spacing="8"

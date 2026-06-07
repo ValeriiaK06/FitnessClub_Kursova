@@ -15,6 +15,8 @@ public partial class BookingEditViewModel : BaseViewModel
     private List<Client> _clients = new();
     private List<Schedule> _schedules = new();
     private List<DateTime> _availableDates = new();
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
 
     [ObservableProperty] private ObservableCollection<string> clientNames = new();
     [ObservableProperty] private ObservableCollection<string> scheduleNames = new();
@@ -24,9 +26,11 @@ public partial class BookingEditViewModel : BaseViewModel
     [ObservableProperty] private int selectedScheduleIndex = -1;
     [ObservableProperty] private int selectedDateIndex = -1;
 
-    public BookingEditViewModel(DatabaseService db)
+    public BookingEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
     }
 
     private int _bookingId;
@@ -137,17 +141,17 @@ public partial class BookingEditViewModel : BaseViewModel
     {
         if (SelectedClientIndex < 0)
         {
-            await Shell.Current.DisplayAlert("Помилка", "Оберіть клієнта", "OK");
+            await _dialog.AlertAsync("Помилка", "Оберіть клієнта", "OK");
             return;
         }
         if (SelectedScheduleIndex < 0)
         {
-            await Shell.Current.DisplayAlert("Помилка", "Оберіть заняття", "OK");
+            await _dialog.AlertAsync("Помилка", "Оберіть заняття", "OK");
             return;
         }
         if (SelectedDateIndex < 0 || SelectedDateIndex >= _availableDates.Count)
         {
-            await Shell.Current.DisplayAlert("Помилка", "Оберіть дату", "OK");
+            await _dialog.AlertAsync("Помилка", "Оберіть дату", "OK");
             return;
         }
 
@@ -172,12 +176,9 @@ public partial class BookingEditViewModel : BaseViewModel
             _db.UpdateBooking(_editing);
         }
 
-        await Shell.Current.GoToAsync("..");
+        await _nav.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await _nav.GoBackAsync();
 }

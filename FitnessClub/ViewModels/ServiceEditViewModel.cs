@@ -10,13 +10,18 @@ namespace FitnessClub.ViewModels;
 public partial class ServiceEditViewModel : BaseViewModel
 {
     private readonly DatabaseService _db;
+    private readonly INavigationService _nav;
+    private readonly IDialogService _dialog;
     private Service? _editing;
+
 
     [ObservableProperty] private string name = string.Empty;
 
-    public ServiceEditViewModel(DatabaseService db)
+    public ServiceEditViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
         _db = db;
+        _nav = nav;
+        _dialog = dialog;
     }
 
     private int _serviceId;
@@ -47,7 +52,7 @@ public partial class ServiceEditViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
-            await Shell.Current.DisplayAlert("Помилка", "Введіть назву послуги", "OK");
+            await _dialog.AlertAsync("Помилка", "Введіть назву послуги", "OK");
             return;
         }
 
@@ -59,12 +64,9 @@ public partial class ServiceEditViewModel : BaseViewModel
             _db.UpdateService(_editing);
         }
 
-        await Shell.Current.GoToAsync("..");
+        await _nav.GoBackAsync();
     }
 
     [RelayCommand]
-    private async Task CancelAsync()
-    {
-        await Shell.Current.GoToAsync("..");
-    }
+    private async Task CancelAsync() => await _nav.GoBackAsync();
 }
