@@ -16,16 +16,32 @@ namespace FitnessClub
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            // Стартуємо з екрана входу
-            var loginPage = Handler?.MauiContext?.Services.GetService<Views.LoginPage>()
-                            ?? throw new InvalidOperationException("LoginPage не зареєстровано");
+            // Тимчасова сторінка-заставка із завантаженням
+            var loadingPage = new ContentPage
+            {
+                Content = new VerticalStackLayout
+                {
+                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.Center,
+                    Spacing = 16,
+                    Children =
+                    {
+                        new ActivityIndicator { IsRunning = true, HorizontalOptions = LayoutOptions.Center },
+                        new Label { Text = "Завантаження даних...", HorizontalOptions = LayoutOptions.Center }
+                    }
+                }
+            };
 
-            var window = new Window(loginPage);
+            var window = new Window(loadingPage);
 
+            // Качаємо базу, тоді показуємо вхід
             window.Created += async (s, e) =>
             {
                 await _sync.DownloadAsync();
-                WeakReferenceMessenger.Default.Send(new DataSyncedMessage());
+
+                var loginPage = Handler?.MauiContext?.Services.GetService<Views.LoginPage>();
+                if (loginPage != null)
+                    window.Page = loginPage;
             };
 
             return window;

@@ -68,6 +68,13 @@
                     BackgroundColor="{StaticResource White}"
                     TextColor="{StaticResource Brand}"/>
 
-		</VerticalStackLayout>
+            <Button Text="Забули пароль?"
+                    Command="{Binding ForgotPasswordCommand}"
+                    FontSize="13" HeightRequest="40"
+                    CornerRadius="10"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource White}"/>
+
+        </VerticalStackLayout>
 	</Grid>
 </ContentPage>

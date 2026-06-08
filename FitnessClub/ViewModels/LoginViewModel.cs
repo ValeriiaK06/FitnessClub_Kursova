@@ -9,6 +9,7 @@ namespace FitnessClub.ViewModels
     {
         private readonly AuthService _auth;
         private readonly IDialogService _dialog;
+        private readonly INavigationService _nav;
 
         [ObservableProperty] private string login = string.Empty;
         [ObservableProperty] private string password = string.Empty;
@@ -17,19 +18,18 @@ namespace FitnessClub.ViewModels
         [ObservableProperty] private bool isReady;
         [ObservableProperty] private string statusText = "Завантаження даних...";
 
-        public LoginViewModel(AuthService auth, IDialogService dialog)
+        public LoginViewModel(AuthService auth, IDialogService dialog, INavigationService nav)
         {
             _auth = auth;
             _dialog = dialog;
+            _nav = nav;
             Title = "Вхід";
 
-            // Чекаємо сигналу, що база завантажилась з хмари
-            WeakReferenceMessenger.Default.Register<DataSyncedMessage>(this, (r, m) =>
-            {
-                IsReady = true;
-                StatusText = string.Empty;
-            });
+            IsReady = true;            // вхід доступний одразу
+            StatusText = string.Empty;
         }
+
+
 
         [RelayCommand]
         private async Task SignInAsync()
@@ -54,6 +54,16 @@ namespace FitnessClub.ViewModels
             {
                 await _dialog.AlertAsync("Помилка", "Невірний логін або пароль", "OK");
             }
+        }
+
+
+        [RelayCommand]
+        private void ForgotPassword()
+        {
+            var services = Application.Current!.Windows[0].Page!.Handler!.MauiContext!.Services;
+            var page = services.GetService<Views.ForgotPasswordPage>();
+            if (page != null)
+                Application.Current!.Windows[0].Page = page;
         }
     }
 }

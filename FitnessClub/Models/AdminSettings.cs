@@ -17,5 +17,14 @@ namespace FitnessClub.Models
 
         [Column("імя")]
         public string AdminName { get; set; } = "Адміністратор";
+
+
+        [Column("секретне_питання")]
+        public string SecurityQuestion { get; set; } = string.Empty;
+
+        [Column("хеш_відповіді")]
+        public string SecurityAnswerHash { get; set; } = string.Empty;
     }
+
+
 }

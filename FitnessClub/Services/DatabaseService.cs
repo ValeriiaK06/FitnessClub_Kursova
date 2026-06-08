@@ -16,7 +16,7 @@ namespace FitnessClub.Services
         public DatabaseService()
         {
             DbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
-          
+           
             _db = new SQLiteConnection(DbPath);
             CreateTables();
             SeedData();

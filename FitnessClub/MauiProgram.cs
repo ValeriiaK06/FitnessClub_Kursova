@@ -63,6 +63,8 @@ namespace FitnessClub
             builder.Services.AddSingleton<AuthService>();
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<FitnessClub.Views.LoginPage>();
+            builder.Services.AddTransient<ForgotPasswordViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.ForgotPasswordPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

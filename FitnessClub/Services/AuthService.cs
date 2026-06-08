@@ -8,6 +8,8 @@ namespace FitnessClub.Services
     {
         private const string DefaultLogin = "admin";
         private const string DefaultPassword = "admin123";
+        private const string DefaultQuestion = "Введіть пароль скидання";
+        private const string DefaultAnswer = "saveadmin";
 
         private readonly DatabaseService _db;
 
@@ -27,11 +29,14 @@ namespace FitnessClub.Services
                     Id = 1,
                     Login = DefaultLogin,
                     PasswordHash = Hash(DefaultPassword),
-                    AdminName = "Адміністратор"
+                    AdminName = "Адміністратор",
+                    SecurityQuestion = DefaultQuestion,
+                    SecurityAnswerHash = Hash(DefaultAnswer.ToLower().Trim())
                 });
             }
         }
 
+        // ===== ВХІД =====
         public bool Validate(string login, string password)
         {
             var s = _db.GetAdminSettings();
@@ -39,6 +44,7 @@ namespace FitnessClub.Services
             return login == s.Login && Hash(password) == s.PasswordHash;
         }
 
+        // ===== ПАРОЛЬ =====
         public bool CheckPassword(string password)
         {
             var s = _db.GetAdminSettings();
@@ -53,6 +59,7 @@ namespace FitnessClub.Services
             _db.SaveAdminSettings(s);
         }
 
+        // ===== ЛОГІН / ІМ'Я =====
         public string GetLogin() => _db.GetAdminSettings()?.Login ?? DefaultLogin;
 
         public string GetAdminName() => _db.GetAdminSettings()?.AdminName ?? "Адміністратор";
@@ -65,6 +72,27 @@ namespace FitnessClub.Services
             _db.SaveAdminSettings(s);
         }
 
+       
+        public string GetSecurityQuestion() =>
+            _db.GetAdminSettings()?.SecurityQuestion ?? DefaultQuestion;
+
+        public bool CheckSecurityAnswer(string answer)
+        {
+            var s = _db.GetAdminSettings();
+            if (s == null) return false;
+            return Hash(answer.ToLower().Trim()) == s.SecurityAnswerHash;
+        }
+
+        public void SetSecurityQuestion(string question, string answer)
+        {
+            var s = _db.GetAdminSettings();
+            if (s == null) return;
+            s.SecurityQuestion = question;
+            s.SecurityAnswerHash = Hash(answer.ToLower().Trim());
+            _db.SaveAdminSettings(s);
+        }
+
+      
         private static string Hash(string text)
         {
             byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(text));
