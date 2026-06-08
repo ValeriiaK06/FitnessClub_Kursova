@@ -12,7 +12,9 @@ namespace FitnessClub.Services
 
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
 
-    
+            if (File.Exists(dbPath))
+                File.Delete(dbPath);
+
             _db = new SQLiteConnection(dbPath);
 
             CreateTables();
@@ -30,6 +32,7 @@ namespace FitnessClub.Services
             _db.CreateTable<Schedule>();
             _db.CreateTable<ClientBooking>();
             _db.CreateTable<SubscriptionHistory>();
+            _db.CreateTable<Specialization>();
         }
 
         private void SeedData()
@@ -38,24 +41,33 @@ namespace FitnessClub.Services
             if (_db.Table<Trainer>().Count() > 0)
                 return;
 
-            // Тренери — по кілька на спеціалізацію для вибору
-            // Силові тренування — 2 тренери
-            _db.Insert(new Trainer { LastName = "Коваль", FirstName = "Олексій", MiddleName = "Іванович", Specialization = "Силові тренування", Experience = 8, Photo = "trainer1.jpg", Phone = "+380661112233", Email = "koval@fitness.ua" });
-            _db.Insert(new Trainer { LastName = "Мороз", FirstName = "Віктор", MiddleName = "Павлович", Specialization = "Силові тренування", Experience = 12, Photo = "trainer5.jpg", Phone = "+380665556677", Email = "moroz@fitness.ua" });
 
-            // Йога та пілатес — 2 тренери
-            _db.Insert(new Trainer { LastName = "Петренко", FirstName = "Марина", MiddleName = "Сергіївна", Specialization = "Йога та пілатес", Experience = 6, Photo = "trainer2.jpg", Phone = "+380662223344", Email = "petrenko@fitness.ua" });
-            _db.Insert(new Trainer { LastName = "Ткаченко", FirstName = "Софія", MiddleName = "Андріївна", Specialization = "Йога та пілатес", Experience = 4, Photo = "trainer6.jpg", Phone = "+380666667788", Email = "tkachenko@fitness.ua" });
+            // Спеціалізації (id 1..5)
+            _db.Insert(new Specialization { Name = "Силові тренування" });   // 1
+            _db.Insert(new Specialization { Name = "Йога та пілатес" });     // 2
+            _db.Insert(new Specialization { Name = "Бокс та кікбоксинг" });  // 3
+            _db.Insert(new Specialization { Name = "Зумба та аеробіка" });   // 4
+            _db.Insert(new Specialization { Name = "Кардіо та схуднення" }); // 5
 
-            // Бокс та кікбоксинг — 2 тренери
-            _db.Insert(new Trainer { LastName = "Савченко", FirstName = "Дмитро", MiddleName = "Олегович", Specialization = "Бокс та кікбоксинг", Experience = 10, Photo = "trainer3.jpg", Phone = "+380663334455", Email = "savchenko@fitness.ua" });
-            _db.Insert(new Trainer { LastName = "Гриценко", FirstName = "Роман", MiddleName = "Юрійович", Specialization = "Бокс та кікбоксинг", Experience = 7, Photo = "trainer7.jpg", Phone = "+380667778899", Email = "grytsenko@fitness.ua" });
+            // Силові (id 1)
+            _db.Insert(new Trainer { LastName = "Коваль", FirstName = "Олексій", MiddleName = "Іванович", SpecializationId = 1, Experience = 8, Photo = "trainer1.jpg", Phone = "+380661112233", Email = "koval@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Мороз", FirstName = "Віктор", MiddleName = "Павлович", SpecializationId = 1, Experience = 12, Photo = "", Phone = "+380665556677", Email = "moroz@fitness.ua" });
 
-            // Зумба та аеробіка — 1 тренер
-            _db.Insert(new Trainer { LastName = "Лисенко", FirstName = "Анна", MiddleName = "Вікторівна", Specialization = "Зумба та аеробіка", Experience = 5, Photo = "trainer4.jpg", Phone = "+380664445566", Email = "lysenko@fitness.ua" });
+            // Йога та пілатес (id 2)
+            _db.Insert(new Trainer { LastName = "Петренко", FirstName = "Марина", MiddleName = "Сергіївна", SpecializationId = 2, Experience = 6, Photo = "trainer2.jpg", Phone = "+380662223344", Email = "petrenko@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Ткаченко", FirstName = "Софія", MiddleName = "Андріївна", SpecializationId = 2, Experience = 4, Photo = "", Phone = "+380666667788", Email = "tkachenko@fitness.ua" });
 
-            // Кардіо та схуднення — 1 тренер
-            _db.Insert(new Trainer { LastName = "Кравченко", FirstName = "Ірина", MiddleName = "Михайлівна", Specialization = "Кардіо та схуднення", Experience = 9, Photo = "trainer8.jpg", Phone = "+380668889900", Email = "kravchenko@fitness.ua" });
+            // Бокс та кікбоксинг (id 3)
+            _db.Insert(new Trainer { LastName = "Савченко", FirstName = "Дмитро", MiddleName = "Олегович", SpecializationId = 3, Experience = 10, Photo = "trainer3.jpg", Phone = "+380663334455", Email = "savchenko@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Гриценко", FirstName = "Роман", MiddleName = "Юрійович", SpecializationId = 3, Experience = 7, Photo = "", Phone = "+380667778899", Email = "grytsenko@fitness.ua" });
+
+            // Зумба та аеробіка (id 4)
+            _db.Insert(new Trainer { LastName = "Лисенко", FirstName = "Анна", MiddleName = "Вікторівна", SpecializationId = 4, Experience = 5, Photo = "trainer4.jpg", Phone = "+380664445566", Email = "lysenko@fitness.ua" });
+
+            // Кардіо та схуднення (id 5)
+            _db.Insert(new Trainer { LastName = "Кравченко", FirstName = "Ірина", MiddleName = "Михайлівна", SpecializationId = 5, Experience = 9, Photo = "", Phone = "+380668889900", Email = "kravchenko@fitness.ua" });
+
+
 
             // Клієнти
             _db.Insert(new Client { LastName = "Іваненко", FirstName = "Марія", MiddleName = "Петрівна", BirthDate = new DateTime(1995, 3, 15), Phone = "+380671234567", Email = "ivanenko@gmail.com", RegistrationDate = new DateTime(2024, 1, 10) });
@@ -125,7 +137,18 @@ namespace FitnessClub.Services
         }
 
         // ===== ТРЕНЕРИ =====
-        public List<Trainer> GetTrainers() => _db.Table<Trainer>().ToList();
+        public List<Trainer> GetTrainers()
+        {
+            var trainers = _db.Table<Trainer>().ToList();
+
+            foreach (var t in trainers)
+            {
+                var spec = _db.Table<Specialization>().FirstOrDefault(s => s.Id == t.SpecializationId);
+                t.SpecializationName = spec?.Name ?? "—";
+            }
+
+            return trainers;
+        }
         public Trainer GetTrainer(int id) => _db.Find<Trainer>(id);
         public void AddTrainer(Trainer trainer) => _db.Insert(trainer);
         public void UpdateTrainer(Trainer trainer) => _db.Update(trainer);
@@ -329,6 +352,14 @@ namespace FitnessClub.Services
                 date = date.AddDays(1);
             return date.AddDays(weeksAhead * 7);
         }
+
+
+        // ===== СПЕЦІАЛІЗАЦІЇ =====
+        public List<Specialization> GetSpecializations() => _db.Table<Specialization>().ToList();
+        public Specialization GetSpecialization(int id) => _db.Find<Specialization>(id);
+        public void AddSpecialization(Specialization s) => _db.Insert(s);
+        public void UpdateSpecialization(Specialization s) => _db.Update(s);
+        public void DeleteSpecialization(Specialization s) => _db.Delete(s);
 
 
     }

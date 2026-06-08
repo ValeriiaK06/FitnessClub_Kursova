@@ -90,7 +90,7 @@
                                         <Border BackgroundColor="{StaticResource White}"
                                                 StrokeThickness="0" StrokeShape="RoundRectangle 8"
                                                 Padding="8,3" HorizontalOptions="Center">
-                                            <Label Text="{Binding Specialization}"
+                                            <Label Text="{Binding SpecializationName}"
                                                    HorizontalTextAlignment="Center"
                                                    FontSize="11" FontAttributes="Bold"
                                                    TextColor="{StaticResource Brand}"/>

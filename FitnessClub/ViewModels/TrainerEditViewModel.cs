@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using FitnessClub.Models;
 using FitnessClub.Services;
+using System.Collections.ObjectModel;
 
 
 namespace FitnessClub.ViewModels;
@@ -17,7 +18,9 @@ public partial class TrainerEditViewModel : BaseViewModel
     [ObservableProperty] private string lastName = string.Empty;
     [ObservableProperty] private string firstName = string.Empty;
     [ObservableProperty] private string middleName = string.Empty;
-    [ObservableProperty] private string specialization = string.Empty;
+    [ObservableProperty] private ObservableCollection<string> specializationNames = new();
+    [ObservableProperty] private int selectedSpecializationIndex = -1;
+    private List<Specialization> _specs = new();
     [ObservableProperty] private string experience = string.Empty;
     [ObservableProperty] private string photo = string.Empty;
     [ObservableProperty] private string phone = string.Empty;
@@ -39,6 +42,9 @@ public partial class TrainerEditViewModel : BaseViewModel
 
     private void Load()
     {
+        _specs = _db.GetSpecializations();
+        SpecializationNames = new ObservableCollection<string>(_specs.Select(s => s.Name));
+
         if (_trainerId == 0)
         {
             Title = "Новий тренер";
@@ -54,7 +60,7 @@ public partial class TrainerEditViewModel : BaseViewModel
             LastName = _editing.LastName;
             FirstName = _editing.FirstName;
             MiddleName = _editing.MiddleName;
-            Specialization = _editing.Specialization;
+            SelectedSpecializationIndex = _specs.FindIndex(s => s.Id == _editing.SpecializationId);
             Experience = _editing.Experience.ToString();
             Photo = _editing.Photo;
             Phone = _editing.Phone;
@@ -76,6 +82,13 @@ public partial class TrainerEditViewModel : BaseViewModel
             await _dialog.AlertAsync("Помилка", "Досвід має бути додатним числом", "OK");
             return;
         }
+        if (SelectedSpecializationIndex < 0)
+        {
+            await _dialog.AlertAsync("Помилка", "Оберіть спеціалізацію", "OK");
+            return;
+        }
+
+        int specId = _specs[SelectedSpecializationIndex].Id;
 
         if (_editing == null)
         {
@@ -84,7 +97,7 @@ public partial class TrainerEditViewModel : BaseViewModel
                 LastName = LastName,
                 FirstName = FirstName,
                 MiddleName = MiddleName ?? "",
-                Specialization = Specialization ?? "",
+                SpecializationId = specId,
                 Experience = exp,
                 Photo = Photo ?? "",
                 Phone = Phone ?? "",
@@ -96,7 +109,7 @@ public partial class TrainerEditViewModel : BaseViewModel
             _editing.LastName = LastName;
             _editing.FirstName = FirstName;
             _editing.MiddleName = MiddleName ?? "";
-            _editing.Specialization = Specialization ?? "";
+            _editing.SpecializationId = specId;
             _editing.Experience = exp;
             _editing.Photo = Photo ?? "";
             _editing.Phone = Phone ?? "";

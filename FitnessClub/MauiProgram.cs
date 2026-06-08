@@ -55,6 +55,10 @@ namespace FitnessClub
             builder.Services.AddTransient<FitnessClub.Views.Details.BookingEditPage>();
             builder.Services.AddSingleton<IDialogService, DialogService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
+            builder.Services.AddTransient<SpecializationsViewModel>();
+            builder.Services.AddTransient<SpecializationsPage>();
+            builder.Services.AddTransient<SpecializationEditViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.Details.SpecializationEditPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

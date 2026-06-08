@@ -10,7 +10,8 @@ namespace FitnessClub.Models
         private string lastName = string.Empty;
         private string firstName = string.Empty;
         private string middleName = string.Empty;
-        private string specialization = string.Empty;
+        private int specializationId;
+        private string specializationName = string.Empty;
         private int experience;
         private string photo = string.Empty;
         private string phone = string.Empty;
@@ -44,12 +45,11 @@ namespace FitnessClub.Models
             set { if (middleName != value) { middleName = value; OnPropertyChanged(); } }
         }
 
-        [MaxLength(100)]
-        [Column("спеціалізація")]
-        public string Specialization
+        [Column("ідентифікатор_спеціалізації")]
+        public int SpecializationId
         {
-            get => specialization;
-            set { if (specialization != value) { specialization = value; OnPropertyChanged(); } }
+            get => specializationId;
+            set { if (specializationId != value) { specializationId = value; OnPropertyChanged(); } }
         }
 
         [Column("досвід_роботи")]
@@ -85,6 +85,14 @@ namespace FitnessClub.Models
 
         [Ignore]
         public bool HasPhoto => !string.IsNullOrWhiteSpace(Photo);
+
+
+        [Ignore]
+        public string SpecializationName
+        {
+            get => specializationName;
+            set { if (specializationName != value) { specializationName = value; OnPropertyChanged(); } }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "") =>

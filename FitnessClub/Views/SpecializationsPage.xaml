@@ -4,8 +4,8 @@
              xmlns:models="clr-namespace:FitnessClub.Models"
              xmlns:vm="clr-namespace:FitnessClub.ViewModels"
              xmlns:views="clr-namespace:FitnessClub.Views"
-             x:Class="FitnessClub.Views.ServicesPage"
-             x:DataType="vm:ServicesViewModel"
+             x:Class="FitnessClub.Views.SpecializationsPage"
+             x:DataType="vm:SpecializationsViewModel"
              x:Name="PageRoot"
              Title="">
 
@@ -18,8 +18,8 @@
 
                 <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
-                        <Label Text="🛎️ Послуги" Style="{StaticResource PageTitle}"/>
-                        <Label Text="Перелік послуг клубу" Style="{StaticResource SubtitleLabel}"/>
+                        <Label Text="🏷️ Спеціалізації" Style="{StaticResource PageTitle}"/>
+                        <Label Text="Напрями тренувань" Style="{StaticResource SubtitleLabel}"/>
                     </VerticalStackLayout>
 
                     <Button Grid.Column="1" Text="＋"
@@ -30,18 +30,16 @@
                             VerticalOptions="Center"/>
                 </Grid>
 
-                <!-- ТАБЛИЦЯ -->
                 <Border Style="{StaticResource Card}" Padding="0"
                         MaximumWidthRequest="1100" HorizontalOptions="Fill">
                     <VerticalStackLayout Spacing="0">
 
-                        <!-- Заголовок таблиці -->
                         <Grid ColumnDefinitions="Auto,*,Auto" Padding="16,12"
                               BackgroundColor="{AppThemeBinding Light={StaticResource PageBgLight}, Dark={StaticResource PageBgDark}}">
-                            <Label Grid.Column="0" Margin="0,0,16,0"
+                            <Label Grid.Column="0"  Margin="0,0,16,0"
                                    FontFamily="OpenSansSemibold" FontSize="11"
                                    TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
-                            <Label Grid.Column="1" Text="НАЗВА ПОСЛУГИ"
+                            <Label Grid.Column="1" Text="НАЗВА"
                                    FontFamily="OpenSansSemibold" FontSize="11"
                                    TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
                             <Label Grid.Column="2" Text="ДІЇ"
@@ -49,31 +47,24 @@
                                    TextColor="{AppThemeBinding Light={StaticResource SubTextLight}, Dark={StaticResource SubTextDark}}"/>
                         </Grid>
 
-                        <!-- Рядки -->
-                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Services}" Spacing="0">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Specializations}" Spacing="0">
                             <BindableLayout.ItemTemplate>
-                                <DataTemplate x:DataType="models:Service">
+                                <DataTemplate x:DataType="models:Specialization">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="16,12" ColumnSpacing="12">
 
-                                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="16,12"
-                                          ColumnSpacing="12">
-
-                                        <!-- Іконка-кружок з номером/значком -->
                                         <Border Grid.Column="0"
                                                 BackgroundColor="{StaticResource Accent}"
                                                 StrokeThickness="0" StrokeShape="RoundRectangle 18"
                                                 WidthRequest="36" HeightRequest="36"
                                                 VerticalOptions="Center">
-                                            <Label Text="🛎️" FontSize="16"
+                                            <Label Text="🏷️" FontSize="16"
                                                    HorizontalOptions="Center" VerticalOptions="Center"/>
                                         </Border>
 
-                                        <!-- Назва -->
                                         <Label Grid.Column="1" Text="{Binding Name}"
-                                               FontSize="15"
-                                               VerticalOptions="Center"
+                                               FontSize="15" VerticalOptions="Center"
                                                TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
 
-                                        <!-- Кнопки -->
                                         <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
                                             <Button Text="✏️"
                                                     Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditCommand}"
@@ -92,7 +83,6 @@
                                         </HorizontalStackLayout>
 
                                     </Grid>
-
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </VerticalStackLayout>
@@ -103,7 +93,6 @@
             </VerticalStackLayout>
 
             <BoxView HeightRequest="60" Color="Transparent"/>
-
             <views:AppFooter/>
 
         </VerticalStackLayout>

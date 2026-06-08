@@ -43,7 +43,9 @@
     <FlyoutItem Title="Тренери" Route="trainers">
         <ShellContent ContentTemplate="{DataTemplate views:TrainersPage}"/>
     </FlyoutItem>
-
+    <FlyoutItem Title="Спеціалізації" Route="specializations">
+        <ShellContent ContentTemplate="{DataTemplate views:SpecializationsPage}"/>
+    </FlyoutItem>
     <FlyoutItem Title="Клієнти" Route="clients">
         <ShellContent ContentTemplate="{DataTemplate views:ClientsPage}"/>
     </FlyoutItem>

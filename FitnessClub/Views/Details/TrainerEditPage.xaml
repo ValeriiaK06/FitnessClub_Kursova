@@ -37,12 +37,13 @@
                             </Border>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="6">
-                            <Label Text="Спеціалізація" Style="{StaticResource FieldLabel}"/>
-                            <Border Style="{StaticResource InputFrame}">
-                                <Entry Text="{Binding Specialization}" Placeholder="Напр. Силові тренування"/>
-                            </Border>
-                        </VerticalStackLayout>
+						<VerticalStackLayout Spacing="6">
+							<Label Text="Спеціалізація" Style="{StaticResource FieldLabel}"/>
+							<Border Style="{StaticResource InputFrame}">
+								<Picker ItemsSource="{Binding SpecializationNames}"
+                                        SelectedIndex="{Binding SelectedSpecializationIndex}"/>
+							</Border>
+						</VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Досвід (років)" Style="{StaticResource FieldLabel}"/>
