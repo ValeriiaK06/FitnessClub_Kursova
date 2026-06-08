@@ -12,9 +12,7 @@ namespace FitnessClub.Services
 
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
 
-            if (File.Exists(dbPath))
-                File.Delete(dbPath);
-
+          
             _db = new SQLiteConnection(dbPath);
 
             CreateTables();
@@ -51,21 +49,21 @@ namespace FitnessClub.Services
 
             // Силові (id 1)
             _db.Insert(new Trainer { LastName = "Коваль", FirstName = "Олексій", MiddleName = "Іванович", SpecializationId = 1, Experience = 8, Photo = "trainer1.jpg", Phone = "+380661112233", Email = "koval@fitness.ua" });
-            _db.Insert(new Trainer { LastName = "Мороз", FirstName = "Віктор", MiddleName = "Павлович", SpecializationId = 1, Experience = 12, Photo = "", Phone = "+380665556677", Email = "moroz@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Мороз", FirstName = "Віктор", MiddleName = "Павлович", SpecializationId = 1, Experience = 12, Photo = "trainer5.jpg", Phone = "+380665556677", Email = "moroz@fitness.ua" });
 
             // Йога та пілатес (id 2)
             _db.Insert(new Trainer { LastName = "Петренко", FirstName = "Марина", MiddleName = "Сергіївна", SpecializationId = 2, Experience = 6, Photo = "trainer2.jpg", Phone = "+380662223344", Email = "petrenko@fitness.ua" });
-            _db.Insert(new Trainer { LastName = "Ткаченко", FirstName = "Софія", MiddleName = "Андріївна", SpecializationId = 2, Experience = 4, Photo = "", Phone = "+380666667788", Email = "tkachenko@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Ткаченко", FirstName = "Софія", MiddleName = "Андріївна", SpecializationId = 2, Experience = 4, Photo = "trainer6.jpg", Phone = "+380666667788", Email = "tkachenko@fitness.ua" });
 
             // Бокс та кікбоксинг (id 3)
             _db.Insert(new Trainer { LastName = "Савченко", FirstName = "Дмитро", MiddleName = "Олегович", SpecializationId = 3, Experience = 10, Photo = "trainer3.jpg", Phone = "+380663334455", Email = "savchenko@fitness.ua" });
-            _db.Insert(new Trainer { LastName = "Гриценко", FirstName = "Роман", MiddleName = "Юрійович", SpecializationId = 3, Experience = 7, Photo = "", Phone = "+380667778899", Email = "grytsenko@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Гриценко", FirstName = "Роман", MiddleName = "Юрійович", SpecializationId = 3, Experience = 7, Photo = "trainer7.jpg", Phone = "+380667778899", Email = "grytsenko@fitness.ua" });
 
             // Зумба та аеробіка (id 4)
             _db.Insert(new Trainer { LastName = "Лисенко", FirstName = "Анна", MiddleName = "Вікторівна", SpecializationId = 4, Experience = 5, Photo = "trainer4.jpg", Phone = "+380664445566", Email = "lysenko@fitness.ua" });
 
             // Кардіо та схуднення (id 5)
-            _db.Insert(new Trainer { LastName = "Кравченко", FirstName = "Ірина", MiddleName = "Михайлівна", SpecializationId = 5, Experience = 9, Photo = "", Phone = "+380668889900", Email = "kravchenko@fitness.ua" });
+            _db.Insert(new Trainer { LastName = "Кравченко", FirstName = "Ірина", MiddleName = "Михайлівна", SpecializationId = 5, Experience = 9, Photo = "trainer8.jpg", Phone = "+380668889900", Email = "kravchenko@fitness.ua" });
 
 
 
@@ -200,6 +198,17 @@ namespace FitnessClub.Services
                 var schedule = _db.Table<Schedule>().FirstOrDefault(s => s.Id == b.ScheduleId);
                 b.ScheduleName = schedule?.Name ?? "—";
                 b.DayOfWeek = schedule?.DayOfWeek ?? "";
+
+                // Тренер цього заняття
+                if (schedule != null)
+                {
+                    var trainer = _db.Table<Trainer>().FirstOrDefault(t => t.Id == schedule.TrainerId);
+                    b.TrainerName = trainer != null ? $"{trainer.LastName} {trainer.FirstName}" : "—";
+                }
+                else
+                {
+                    b.TrainerName = "—";
+                }
             }
 
             return list;

@@ -8,6 +8,8 @@ namespace FitnessClub.Models
     public class ClientBooking : INotifyPropertyChanged
     {
         private DateTime bookingDate = DateTime.Today;
+        private string trainerName = string.Empty;
+
 
         [PrimaryKey, AutoIncrement]
         [Column("ідентифікатор_запису")]
@@ -53,6 +55,14 @@ namespace FitnessClub.Models
 
         [Ignore]
         public bool IsActive => BookingDate.Date >= DateTime.Today;
+
+
+        [Ignore]
+        public string TrainerName
+        {
+            get => trainerName;
+            set { if (trainerName != value) { trainerName = value; OnPropertyChanged(); } }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "") =>

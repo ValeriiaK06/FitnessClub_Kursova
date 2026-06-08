@@ -83,6 +83,8 @@
                                     <Label Text="{Binding ScheduleName, StringFormat='🏋️ {0}'}"
                                            FontSize="14"
                                            TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"/>
+                                    <Label Text="{Binding TrainerName, StringFormat='👨‍🏫 {0}'}"
+                                           Style="{StaticResource SubtitleLabel}"/>
                                     <Label Text="{Binding DayOfWeek, StringFormat='📆 {0}'}"
                                            Style="{StaticResource SubtitleLabel}"/>
                                     <Label Text="{Binding BookingDate, StringFormat='🕐 {0:dd.MM.yyyy}'}"
