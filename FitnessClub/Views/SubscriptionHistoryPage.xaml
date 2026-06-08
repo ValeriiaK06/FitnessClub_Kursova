@@ -22,6 +22,16 @@
 					<Label Text="📜 Історія абонементів" Style="{StaticResource PageTitle}"/>
 					<Label Text="Журнал усіх змін" Style="{StaticResource SubtitleLabel}"/>
 				</VerticalStackLayout>
+            
+                <Border Style="{StaticResource InputFrame}">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label Grid.Column="0" Text="🔍" FontSize="16"
+                               VerticalOptions="Center" Margin="0,0,8,0"/>
+                        <Entry Grid.Column="1"
+                               Text="{Binding SearchText}"
+                               Placeholder="Пошук за іменем або прізвищем клієнта"/>
+                    </Grid>
+                </Border>
 
 				<VerticalStackLayout BindableLayout.ItemsSource="{Binding History}" Spacing="10">
 					<BindableLayout.ItemTemplate>

@@ -6,42 +6,44 @@
              x:Class="FitnessClub.Views.Details.SpecializationEditPage"
              x:DataType="vm:SpecializationEditViewModel"
              Title="">
-    <ScrollView>
-        <VerticalStackLayout Spacing="0">
-            <views:AppHeader/>
-            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
 
-                <Label Text="{Binding Title}" Style="{StaticResource PageTitle}"/>
+	<ScrollView>
+		<Grid RowDefinitions="*, Auto" MinimumHeightRequest="{OnPlatform iOS=800, Android=700, WinUI=800, MacCatalyst=800}">
 
-                <Border Style="{StaticResource Card}">
-                    <VerticalStackLayout Spacing="14">
-                        <VerticalStackLayout Spacing="6">
-                            <Label Text="Назва спеціалізації" Style="{StaticResource FieldLabel}"/>
-                            <Border Style="{StaticResource InputFrame}">
-                                <Entry Text="{Binding Name}" Placeholder="Напр. Кросфіт"/>
-                            </Border>
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
+			<VerticalStackLayout Grid.Row="0" Spacing="0">
+				<views:AppHeader/>
 
-                <HorizontalStackLayout Spacing="12" HorizontalOptions="Start">
-                    <Button Text="💾"
-                            Command="{Binding SaveCommand}"
-                            FontSize="20" Padding="0"
-                            WidthRequest="54" HeightRequest="54"
-                            CornerRadius="14"
-                            BackgroundColor="{StaticResource Brand}"/>
-                    <Button Text="←"
-                            Command="{Binding CancelCommand}"
-                            FontSize="22" Padding="0"
-                            WidthRequest="54" HeightRequest="54"
-                            CornerRadius="14"
-                            Style="{StaticResource SecondaryButton}"/>
-                </HorizontalStackLayout>
+				<VerticalStackLayout Padding="20" Spacing="16">
+					<Label Text="{Binding Title}" Style="{StaticResource PageTitle}"/>
+					<Border Style="{StaticResource Card}">
+						<VerticalStackLayout Spacing="14">
+							<VerticalStackLayout Spacing="6">
+								<Label Text="Назва спеціалізації" Style="{StaticResource FieldLabel}"/>
+								<Border Style="{StaticResource InputFrame}">
+									<Entry Text="{Binding Name}" Placeholder="Напр. Кросфіт"/>
+								</Border>
+							</VerticalStackLayout>
+						</VerticalStackLayout>
+					</Border>
+					<HorizontalStackLayout Spacing="12" HorizontalOptions="Start">
+						<Button Text="💾"
+                                Command="{Binding SaveCommand}"
+                                FontSize="20" Padding="0"
+                                WidthRequest="54" HeightRequest="54"
+                                CornerRadius="14"
+                                BackgroundColor="{StaticResource Brand}"/>
+						<Button Text="←"
+                                Command="{Binding CancelCommand}"
+                                FontSize="22" Padding="0"
+                                WidthRequest="54" HeightRequest="54"
+                                CornerRadius="14"
+                                Style="{StaticResource SecondaryButton}"/>
+					</HorizontalStackLayout>
+				</VerticalStackLayout>
+			</VerticalStackLayout>
 
-            </VerticalStackLayout>
-            <BoxView HeightRequest="40" Color="Transparent"/>
-            <views:AppFooter/>
-        </VerticalStackLayout>
-    </ScrollView>
+			<views:AppFooter Grid.Row="1"/>
+
+		</Grid>
+	</ScrollView>
 </ContentPage>

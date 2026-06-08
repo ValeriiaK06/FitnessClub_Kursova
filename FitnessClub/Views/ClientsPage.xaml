@@ -29,7 +29,16 @@
                             Padding="0" CornerRadius="14"
                             VerticalOptions="Center"/>
                 </Grid>
-
+              
+                <Border Style="{StaticResource InputFrame}">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label Grid.Column="0" Text="🔍" FontSize="16"
+                               VerticalOptions="Center" Margin="0,0,8,0"/>
+                        <Entry Grid.Column="1"
+                               Text="{Binding SearchText}"
+                               Placeholder="Пошук за іменем або прізвищем"/>
+                    </Grid>
+                </Border>
                 <FlexLayout BindableLayout.ItemsSource="{Binding Clients}"
                             Wrap="Wrap" JustifyContent="Center">
                     <BindableLayout.ItemTemplate>

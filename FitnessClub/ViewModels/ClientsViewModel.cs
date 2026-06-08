@@ -12,8 +12,14 @@ public partial class ClientsViewModel : BaseViewModel
     private readonly INavigationService _nav;
     private readonly IDialogService _dialog;
 
+    // Повний список (джерело для фільтра)
+    private List<Client> _all = new();
+
     [ObservableProperty]
     private ObservableCollection<Client> clients = new();
+
+    [ObservableProperty]
+    private string searchText = string.Empty;
 
     public ClientsViewModel(DatabaseService db, INavigationService nav, IDialogService dialog)
     {
@@ -26,9 +32,28 @@ public partial class ClientsViewModel : BaseViewModel
     [RelayCommand]
     private void Load()
     {
-        var data = _db.GetClients();
+        _all = _db.GetClients();
+        ApplyFilter();
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        var query = SearchText?.Trim() ?? string.Empty;
+
+        var filtered = string.IsNullOrEmpty(query)
+            ? _all
+            : _all.Where(c =>
+                $"{c.LastName} {c.FirstName}".Contains(query, StringComparison.OrdinalIgnoreCase))
+              .ToList();
+
         Clients.Clear();
-        foreach (var c in data) Clients.Add(c);
+        foreach (var c in filtered)
+            Clients.Add(c);
     }
 
     [RelayCommand]
