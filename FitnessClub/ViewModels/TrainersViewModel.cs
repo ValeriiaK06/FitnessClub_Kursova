@@ -37,12 +37,31 @@ public partial class TrainersViewModel : BaseViewModel
     [RelayCommand]
     private async Task EditAsync(int id) => await _nav.GoToAsync($"traineredit?trainer_id={id}");
 
+  
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
-        bool confirm = await _dialog.ConfirmAsync("Видалення", "Видалити цього тренера?", "Так", "Скасувати");
+        // Перевіряємо, чи має тренер заняття
+        int scheduleCount = _db.CountSchedulesForTrainer(id);
+        if (scheduleCount > 0)
+        {
+            await _dialog.AlertAsync(
+                "Неможливо видалити",
+                $"У цього тренера є заняття в розкладі ({scheduleCount}). " +
+                "Спершу видмініть або перенесіть його заняття.",
+                "OK");
+            return;
+        }
+
+        bool confirm = await _dialog.ConfirmAsync(
+            "Видалення", "Видалити цього тренера?", "Так", "Скасувати");
         if (!confirm) return;
+
         var item = _db.GetTrainer(id);
-        if (item != null) { _db.DeleteTrainer(item); Load(); }
+        if (item != null)
+        {
+            _db.DeleteTrainer(item);
+            Load();
+        }
     }
 }

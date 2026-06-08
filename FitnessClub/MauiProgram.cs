@@ -59,6 +59,10 @@ namespace FitnessClub
             builder.Services.AddTransient<SpecializationsPage>();
             builder.Services.AddTransient<SpecializationEditViewModel>();
             builder.Services.AddTransient<FitnessClub.Views.Details.SpecializationEditPage>();
+            builder.Services.AddSingleton<SupabaseSyncService>();
+            builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<FitnessClub.Views.LoginPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

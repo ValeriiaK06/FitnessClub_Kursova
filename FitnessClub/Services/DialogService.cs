@@ -2,10 +2,13 @@
 {
     public class DialogService : IDialogService
     {
+        private Page? CurrentPage =>
+            Shell.Current ?? Application.Current?.Windows.FirstOrDefault()?.Page;
+
         public Task<bool> ConfirmAsync(string title, string message, string accept, string cancel)
-            => Shell.Current.DisplayAlert(title, message, accept, cancel);
+            => CurrentPage!.DisplayAlert(title, message, accept, cancel);
 
         public Task AlertAsync(string title, string message, string cancel)
-            => Shell.Current.DisplayAlert(title, message, cancel);
+            => CurrentPage!.DisplayAlert(title, message, cancel);
     }
 }

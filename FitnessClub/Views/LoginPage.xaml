@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FitnessClub.ViewModels"
+             x:Class="FitnessClub.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Title="">
+	<Grid>
+		<Grid.Background>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource Brand}" Offset="0"/>
+				<GradientStop Color="{StaticResource Accent}" Offset="1"/>
+			</LinearGradientBrush>
+		</Grid.Background>
+
+		<VerticalStackLayout VerticalOptions="Center" Padding="30" Spacing="18">
+
+			<!-- Аватар адміністратора -->
+			<Border StrokeShape="RoundRectangle 60"
+                    StrokeThickness="3"
+                    Stroke="{StaticResource White}"
+                    BackgroundColor="{StaticResource BrandDark}"
+                    WidthRequest="110" HeightRequest="110"
+                    HorizontalOptions="Center">
+				<Label Text="👤" FontSize="54"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+			</Border>
+
+			<Label Text="💪 FitnessClub"
+                   FontFamily="OpenSansSemibold" FontSize="34"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource White}"/>
+			<Label Text="Панель адміністратора"
+                   FontSize="15" HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource Gray100}"
+                   Margin="0,0,0,10"/>
+
+			<Border BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                    Padding="14,2">
+				<Entry Text="{Binding Login}"
+                       Placeholder="Логін"
+                       TextColor="{StaticResource Gray900}"
+                       PlaceholderColor="{StaticResource Gray500}"/>
+			</Border>
+
+			<Border BackgroundColor="{StaticResource White}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                    Padding="14,2">
+				<Entry Text="{Binding Password}"
+                       Placeholder="Пароль"
+                       IsPassword="True"
+                       TextColor="{StaticResource Gray900}"
+                       PlaceholderColor="{StaticResource Gray500}"/>
+			</Border>
+
+			<Label Text="{Binding StatusText}"
+                   HorizontalTextAlignment="Center"
+                   FontSize="13"
+                   TextColor="{StaticResource Gray100}"
+                   IsVisible="{Binding IsReady, Converter={StaticResource InvertBoolConverter}}"/>
+
+			<Button Text="Увійти"
+                    Command="{Binding SignInCommand}"
+                    IsEnabled="{Binding IsReady}"
+                    FontSize="16" HeightRequest="50"
+                    CornerRadius="12"
+                    BackgroundColor="{StaticResource White}"
+                    TextColor="{StaticResource Brand}"/>
+
+		</VerticalStackLayout>
+	</Grid>
+</ContentPage>

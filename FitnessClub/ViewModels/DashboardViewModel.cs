@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using FitnessClub.Services;
 
 namespace FitnessClub.ViewModels
@@ -8,9 +9,9 @@ namespace FitnessClub.ViewModels
     {
         private readonly DatabaseService _db;
         private readonly IDialogService _dialog;
+        private readonly AuthService _auth;
 
-        private const string AdminNameKey = "admin_name";
-
+       
         [ObservableProperty] private int trainersCount;
         [ObservableProperty] private int clientsCount;
         [ObservableProperty] private int subscriptionsCount;
@@ -18,26 +19,32 @@ namespace FitnessClub.ViewModels
         [ObservableProperty] private int activeSubsCount;
         [ObservableProperty] private int schedulesCount;
 
-        // Ім'я адміністратора
         [ObservableProperty] private string adminName = "Адміністратор";
-
-        // Режим редагування імені
         [ObservableProperty] private bool isEditingName;
         [ObservableProperty] private string editNameText = string.Empty;
 
-        public DashboardViewModel(DatabaseService db, IDialogService dialog)
+        // Зміна пароля
+        [ObservableProperty] private bool isChangingPassword;
+        [ObservableProperty] private string oldPassword = string.Empty;
+        [ObservableProperty] private string newPassword = string.Empty;
+
+        public DashboardViewModel(DatabaseService db, IDialogService dialog, AuthService auth)
         {
             _db = db;
             _dialog = dialog;
+            _auth = auth;
             Title = "Дашборд";
+
+            WeakReferenceMessenger.Default.Register<DataSyncedMessage>(this, (r, m) =>
+            {
+                Load();
+            });
         }
 
         [RelayCommand]
         private void Load()
         {
-            // Завантажуємо збережене ім'я (або значення за замовчуванням)
-            AdminName = Preferences.Get(AdminNameKey, "Адміністратор");
-
+            AdminName = _auth.GetAdminName();
             TrainersCount = _db.GetTrainers().Count;
             ClientsCount = _db.GetClients().Count;
             SubscriptionsCount = _db.GetSubscriptions().Count;
@@ -45,8 +52,7 @@ namespace FitnessClub.ViewModels
             SchedulesCount = _db.GetSchedules().Count;
             ActiveSubsCount = _db.GetClientSubscriptions().Count(s => s.IsActive);
         }
-
-        // Почати редагування — відкриває поле з поточним ім'ям
+        // ===== ІМ'Я АДМІНА =====
         [RelayCommand]
         private void StartEditName()
         {
@@ -54,7 +60,7 @@ namespace FitnessClub.ViewModels
             IsEditingName = true;
         }
 
-        // Зберегти нове ім'я
+       
         [RelayCommand]
         private void SaveName()
         {
@@ -62,16 +68,49 @@ namespace FitnessClub.ViewModels
             if (!string.IsNullOrEmpty(trimmed))
             {
                 AdminName = trimmed;
-                Preferences.Set(AdminNameKey, trimmed);   // зберігаємо між запусками
+                _auth.SetAdminName(trimmed);
             }
             IsEditingName = false;
         }
 
-        // Скасувати
         [RelayCommand]
         private void CancelEditName()
         {
             IsEditingName = false;
+        }
+
+        // ===== ЗМІНА ПАРОЛЯ =====
+        [RelayCommand]
+        private void StartChangePassword()
+        {
+            OldPassword = string.Empty;
+            NewPassword = string.Empty;
+            IsChangingPassword = true;
+        }
+
+        [RelayCommand]
+        private async Task SavePasswordAsync()
+        {
+            if (!_auth.CheckPassword(OldPassword))
+            {
+                await _dialog.AlertAsync("Помилка", "Поточний пароль невірний", "OK");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(NewPassword) || NewPassword.Length < 4)
+            {
+                await _dialog.AlertAsync("Помилка", "Новий пароль має містити щонайменше 4 символи", "OK");
+                return;
+            }
+
+            _auth.ChangePassword(NewPassword);
+            IsChangingPassword = false;
+            await _dialog.AlertAsync("Готово", "Пароль успішно змінено", "OK");
+        }
+
+        [RelayCommand]
+        private void CancelChangePassword()
+        {
+            IsChangingPassword = false;
         }
     }
 }

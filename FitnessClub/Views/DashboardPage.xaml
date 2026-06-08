@@ -31,7 +31,7 @@
 
                         <VerticalStackLayout Padding="24" Spacing="10">
 
-                            <!-- Звичайний режим -->
+                            <!-- Звичайний режим: вітання + кнопка змінити ім'я -->
                             <Grid ColumnDefinitions="*,Auto"
                                   IsVisible="{Binding IsEditingName, Converter={StaticResource InvertBoolConverter}}">
                                 <VerticalStackLayout Grid.Column="0" Spacing="2">
@@ -54,7 +54,7 @@
                                         TextColor="{StaticResource Brand}"/>
                             </Grid>
 
-                            <!-- Режим редагування -->
+                            <!-- Режим редагування імені -->
                             <VerticalStackLayout Spacing="10" IsVisible="{Binding IsEditingName}">
                                 <Label Text="Введіть ім'я адміністратора" FontSize="13"
                                        TextColor="{StaticResource White}"/>
@@ -77,6 +77,62 @@
                                             TextColor="{StaticResource Brand}"/>
                                     <Button Text="Скасувати"
                                             Command="{Binding CancelEditNameCommand}"
+                                            FontSize="14" HeightRequest="42"
+                                            CornerRadius="12"
+                                            BackgroundColor="Transparent"
+                                            TextColor="{StaticResource White}"
+                                            BorderColor="{StaticResource White}"
+                                            BorderWidth="1"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+
+                            <!-- Кнопка "Змінити пароль" (звичайний режим) -->
+                            <Button Text="🔒 Змінити пароль"
+                                    Command="{Binding StartChangePasswordCommand}"
+                                    IsVisible="{Binding IsChangingPassword, Converter={StaticResource InvertBoolConverter}}"
+                                    FontSize="13" HeightRequest="40"
+                                    CornerRadius="10"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource White}"
+                                    BorderColor="{StaticResource White}"
+                                    BorderWidth="1"
+                                    HorizontalOptions="Start"/>
+
+                            <!-- Форма зміни пароля -->
+                            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsChangingPassword}">
+                                <Label Text="Зміна пароля" FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource White}"/>
+
+                                <Border BackgroundColor="{StaticResource White}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="12,0">
+                                    <Entry Text="{Binding OldPassword}"
+                                           Placeholder="Поточний пароль"
+                                           IsPassword="True"
+                                           TextColor="{StaticResource Gray900}"
+                                           PlaceholderColor="{StaticResource Gray500}"/>
+                                </Border>
+
+                                <Border BackgroundColor="{StaticResource White}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="12,0">
+                                    <Entry Text="{Binding NewPassword}"
+                                           Placeholder="Новий пароль"
+                                           IsPassword="True"
+                                           TextColor="{StaticResource Gray900}"
+                                           PlaceholderColor="{StaticResource Gray500}"/>
+                                </Border>
+
+                                <HorizontalStackLayout Spacing="8">
+                                    <Button Text="💾 Зберегти"
+                                            Command="{Binding SavePasswordCommand}"
+                                            FontSize="14" HeightRequest="42"
+                                            CornerRadius="12"
+                                            BackgroundColor="{StaticResource White}"
+                                            TextColor="{StaticResource Brand}"/>
+                                    <Button Text="Скасувати"
+                                            Command="{Binding CancelChangePasswordCommand}"
                                             FontSize="14" HeightRequest="42"
                                             CornerRadius="12"
                                             BackgroundColor="Transparent"

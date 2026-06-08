@@ -7,16 +7,30 @@ namespace FitnessClub.Services
     {
         private SQLiteConnection _db;
 
+        public string DbPath { get; }
+
+        // Подія: дані змінилися (для автосинхронізації)
+        public event Action? DataChanged;
+        private void NotifyChanged() => DataChanged?.Invoke();
+
         public DatabaseService()
         {
-
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
-
+            DbPath = Path.Combine(FileSystem.AppDataDirectory, "fitnessclub.db");
           
-            _db = new SQLiteConnection(dbPath);
-
+            _db = new SQLiteConnection(DbPath);
             CreateTables();
             SeedData();
+        }
+
+        public void CloseConnection()
+        {
+            _db?.Close();
+        }
+
+        public void ReopenConnection()
+        {
+            _db = new SQLiteConnection(DbPath);
+            CreateTables();
         }
 
         private void CreateTables()
@@ -31,21 +45,20 @@ namespace FitnessClub.Services
             _db.CreateTable<ClientBooking>();
             _db.CreateTable<SubscriptionHistory>();
             _db.CreateTable<Specialization>();
+            _db.CreateTable<AdminSettings>();
         }
 
         private void SeedData()
         {
-            // Заповнюємо тільки якщо таблиці порожні
             if (_db.Table<Trainer>().Count() > 0)
                 return;
 
-
             // Спеціалізації (id 1..5)
-            _db.Insert(new Specialization { Name = "Силові тренування" });   // 1
-            _db.Insert(new Specialization { Name = "Йога та пілатес" });     // 2
-            _db.Insert(new Specialization { Name = "Бокс та кікбоксинг" });  // 3
-            _db.Insert(new Specialization { Name = "Зумба та аеробіка" });   // 4
-            _db.Insert(new Specialization { Name = "Кардіо та схуднення" }); // 5
+            _db.Insert(new Specialization { Name = "Силові тренування" });
+            _db.Insert(new Specialization { Name = "Йога та пілатес" });
+            _db.Insert(new Specialization { Name = "Бокс та кікбоксинг" });
+            _db.Insert(new Specialization { Name = "Зумба та аеробіка" });
+            _db.Insert(new Specialization { Name = "Кардіо та схуднення" });
 
             // Силові (id 1)
             _db.Insert(new Trainer { LastName = "Коваль", FirstName = "Олексій", MiddleName = "Іванович", SpecializationId = 1, Experience = 8, Photo = "trainer1.jpg", Phone = "+380661112233", Email = "koval@fitness.ua" });
@@ -64,8 +77,6 @@ namespace FitnessClub.Services
 
             // Кардіо та схуднення (id 5)
             _db.Insert(new Trainer { LastName = "Кравченко", FirstName = "Ірина", MiddleName = "Михайлівна", SpecializationId = 5, Experience = 9, Photo = "trainer8.jpg", Phone = "+380668889900", Email = "kravchenko@fitness.ua" });
-
-
 
             // Клієнти
             _db.Insert(new Client { LastName = "Іваненко", FirstName = "Марія", MiddleName = "Петрівна", BirthDate = new DateTime(1995, 3, 15), Phone = "+380671234567", Email = "ivanenko@gmail.com", RegistrationDate = new DateTime(2024, 1, 10) });
@@ -111,7 +122,7 @@ namespace FitnessClub.Services
             _db.Insert(new ClientSubscription { ClientId = 7, SubscriptionId = 1, PurchaseDate = new DateTime(2024, 3, 20), ExpiryDate = new DateTime(2024, 6, 20), IsActive = true });
             _db.Insert(new ClientSubscription { ClientId = 8, SubscriptionId = 2, PurchaseDate = new DateTime(2024, 4, 1), ExpiryDate = new DateTime(2024, 7, 1), IsActive = false });
 
-            // Розклад занять — тренери відповідають своїм спеціалізаціям
+            // Розклад занять
             _db.Insert(new Schedule { Name = "Силове тренування", DayOfWeek = "Понеділок", StartTime = new TimeSpan(9, 0, 0), Duration = 60, TrainerId = 1 });
             _db.Insert(new Schedule { Name = "Силове тренування", DayOfWeek = "Середа", StartTime = new TimeSpan(10, 0, 0), Duration = 60, TrainerId = 2 });
             _db.Insert(new Schedule { Name = "Йога", DayOfWeek = "Понеділок", StartTime = new TimeSpan(18, 30, 0), Duration = 90, TrainerId = 3 });
@@ -122,10 +133,6 @@ namespace FitnessClub.Services
             _db.Insert(new Schedule { Name = "Кардіо", DayOfWeek = "Четвер", StartTime = new TimeSpan(8, 0, 0), Duration = 45, TrainerId = 8 });
 
             // Записи клієнтів
-            // Записи клієнтів — дати обчислюються за днем заняття (майбутні, активні)
-            // Нагадування про дні занять із seed:
-            // Schedule 1 — Силове, Понеділок | 3 — Йога, Понеділок | 4 — Пілатес, Четвер
-            // 5 — Бокс, Вівторок | 6 — Кікбоксинг, П'ятниця | 7 — Зумба, Середа
             _db.Insert(new ClientBooking { ClientId = 1, ScheduleId = 3, BookingDate = NextWeekday(DayOfWeek.Monday, 0) });
             _db.Insert(new ClientBooking { ClientId = 2, ScheduleId = 5, BookingDate = NextWeekday(DayOfWeek.Tuesday, 0) });
             _db.Insert(new ClientBooking { ClientId = 3, ScheduleId = 7, BookingDate = NextWeekday(DayOfWeek.Wednesday, 0) });
@@ -134,32 +141,46 @@ namespace FitnessClub.Services
             _db.Insert(new ClientBooking { ClientId = 6, ScheduleId = 6, BookingDate = NextWeekday(DayOfWeek.Friday, 0) });
         }
 
+        // ===== АДМІНІСТРАТОР =====
+        public AdminSettings? GetAdminSettings() =>
+            _db.Table<AdminSettings>().FirstOrDefault();
+
+        public void SaveAdminSettings(AdminSettings settings)
+        {
+            var existing = _db.Table<AdminSettings>().FirstOrDefault();
+            if (existing == null)
+                _db.Insert(settings);
+            else
+                _db.Update(settings);
+            NotifyChanged();
+        }
+
         // ===== ТРЕНЕРИ =====
         public List<Trainer> GetTrainers()
         {
             var trainers = _db.Table<Trainer>().ToList();
-
             foreach (var t in trainers)
             {
                 var spec = _db.Table<Specialization>().FirstOrDefault(s => s.Id == t.SpecializationId);
                 t.SpecializationName = spec?.Name ?? "—";
             }
-
             return trainers;
         }
         public Trainer GetTrainer(int id) => _db.Find<Trainer>(id);
-        public void AddTrainer(Trainer trainer) => _db.Insert(trainer);
-        public void UpdateTrainer(Trainer trainer) => _db.Update(trainer);
-        public void DeleteTrainer(Trainer trainer) => _db.Delete(trainer);
+        public void AddTrainer(Trainer trainer) { _db.Insert(trainer); NotifyChanged(); }
+        public void UpdateTrainer(Trainer trainer) { _db.Update(trainer); NotifyChanged(); }
+
+        // Скільки занять у цього тренера (для перевірки перед видаленням)
+        public int CountSchedulesForTrainer(int trainerId) =>
+            _db.Table<Schedule>().Count(s => s.TrainerId == trainerId);
+        public void DeleteTrainer(Trainer trainer) { _db.Delete(trainer); NotifyChanged(); }
 
         // ===== КЛІЄНТИ =====
         public List<Client> GetClients()
         {
             var clients = _db.Table<Client>().ToList();
-
             foreach (var client in clients)
             {
-                // Шукаємо активний абонемент цього клієнта
                 var clientSub = _db.Table<ClientSubscription>()
                     .FirstOrDefault(cs => cs.ClientId == client.Id && cs.IsActive);
 
@@ -167,7 +188,6 @@ namespace FitnessClub.Services
                 {
                     var sub = _db.Table<Subscription>()
                         .FirstOrDefault(s => s.Id == clientSub.SubscriptionId);
-
                     client.SubscriptionName = sub?.Name ?? "—";
                     client.HasActiveSubscription = true;
                 }
@@ -177,19 +197,35 @@ namespace FitnessClub.Services
                     client.HasActiveSubscription = false;
                 }
             }
-
             return clients;
         }
         public Client GetClient(int id) => _db.Find<Client>(id);
-        public void AddClient(Client client) => _db.Insert(client);
-        public void UpdateClient(Client client) => _db.Update(client);
-        public void DeleteClient(Client client) => _db.Delete(client);
+        public void AddClient(Client client) { _db.Insert(client); NotifyChanged(); }
+        public void UpdateClient(Client client) { _db.Update(client); NotifyChanged(); }
+        public void DeleteClient(Client client)
+        {
+            // Видаляємо записи цього клієнта
+            var bookings = _db.Table<ClientBooking>()
+                .Where(b => b.ClientId == client.Id).ToList();
+            foreach (var b in bookings)
+                _db.Delete(b);
+
+            // Видаляємо абонементи цього клієнта
+            var subs = _db.Table<ClientSubscription>()
+                .Where(cs => cs.ClientId == client.Id).ToList();
+            foreach (var cs in subs)
+                _db.Delete(cs);
+
+            // Видаляємо самого клієнта
+            _db.Delete(client);
+
+            NotifyChanged();
+        }
 
         // ===== ЗАПИСИ КЛІЄНТІВ =====
         public List<ClientBooking> GetBookings()
         {
             var list = _db.Table<ClientBooking>().ToList();
-
             foreach (var b in list)
             {
                 var client = _db.Table<Client>().FirstOrDefault(c => c.Id == b.ClientId);
@@ -199,7 +235,6 @@ namespace FitnessClub.Services
                 b.ScheduleName = schedule?.Name ?? "—";
                 b.DayOfWeek = schedule?.DayOfWeek ?? "";
 
-                // Тренер цього заняття
                 if (schedule != null)
                 {
                     var trainer = _db.Table<Trainer>().FirstOrDefault(t => t.Id == schedule.TrainerId);
@@ -210,48 +245,32 @@ namespace FitnessClub.Services
                     b.TrainerName = "—";
                 }
             }
-
             return list;
         }
-
-        // Кількість активних (майбутніх) записів — для дашборда
         public int GetActiveBookingsCount() =>
             _db.Table<ClientBooking>().ToList().Count(b => b.BookingDate.Date >= DateTime.Today);
         public ClientBooking GetBooking(int id) => _db.Find<ClientBooking>(id);
-        public void AddBooking(ClientBooking booking) => _db.Insert(booking);
-        public void UpdateBooking(ClientBooking booking) => _db.Update(booking);
-        public void DeleteBooking(ClientBooking booking) => _db.Delete(booking);
-
-
+        public void AddBooking(ClientBooking booking) { _db.Insert(booking); NotifyChanged(); }
+        public void UpdateBooking(ClientBooking booking) { _db.Update(booking); NotifyChanged(); }
+        public void DeleteBooking(ClientBooking booking) { _db.Delete(booking); NotifyChanged(); }
 
         // ===== РОЗКЛАД =====
         public List<Schedule> GetSchedules()
         {
-            // 1. Берем голое расписание
             var schedules = _db.Table<Schedule>().ToList();
-
-            // 2. Для каждой записи расписания вручную находим тренера по ID
             foreach (var schedule in schedules)
-            {
-                // Ищем в таблице тренеров того, чей Id совпадает с TrainerId в расписании
                 schedule.Trainer = _db.Table<Trainer>().FirstOrDefault(t => t.Id == schedule.TrainerId);
-            }
-
             return schedules;
         }
         public Schedule GetSchedule(int id) => _db.Find<Schedule>(id);
-        public void AddSchedule(Schedule schedule) => _db.Insert(schedule);
-        public void UpdateSchedule(Schedule schedule) => _db.Update(schedule);
-        public void DeleteSchedule(Schedule schedule) => _db.Delete(schedule);
-
-
-
+        public void AddSchedule(Schedule schedule) { _db.Insert(schedule); NotifyChanged(); }
+        public void UpdateSchedule(Schedule schedule) { _db.Update(schedule); NotifyChanged(); }
+        public void DeleteSchedule(Schedule schedule) { _db.Delete(schedule); NotifyChanged(); }
 
         // ===== АБОНЕМЕНТИ КЛІЄНТІВ =====
         public List<ClientSubscription> GetClientSubscriptions()
         {
             var list = _db.Table<ClientSubscription>().ToList();
-
             foreach (var cs in list)
             {
                 var client = _db.Table<Client>().FirstOrDefault(c => c.Id == cs.ClientId);
@@ -260,31 +279,24 @@ namespace FitnessClub.Services
                 var sub = _db.Table<Subscription>().FirstOrDefault(s => s.Id == cs.SubscriptionId);
                 cs.PlanName = sub?.Name ?? "—";
             }
-
             return list;
         }
         public ClientSubscription GetClientSubscription(int id) => _db.Find<ClientSubscription>(id);
-        public void AddClientSubscription(ClientSubscription cs) => _db.Insert(cs);
-        public void UpdateClientSubscription(ClientSubscription cs) => _db.Update(cs);
-        public void DeleteClientSubscription(ClientSubscription cs) => _db.Delete(cs);
-
-
-
+        public void AddClientSubscription(ClientSubscription cs) { _db.Insert(cs); NotifyChanged(); }
+        public void UpdateClientSubscription(ClientSubscription cs) { _db.Update(cs); NotifyChanged(); }
+        public void DeleteClientSubscription(ClientSubscription cs) { _db.Delete(cs); NotifyChanged(); }
 
         // ===== ІСТОРІЯ АБОНЕМЕНТІВ =====
         public List<SubscriptionHistory> GetSubscriptionHistory() =>
             _db.Table<SubscriptionHistory>().OrderByDescending(h => h.ActionDate).ToList();
-        public void AddHistory(SubscriptionHistory h) => _db.Insert(h);
-
+        public void AddHistory(SubscriptionHistory h) { _db.Insert(h); NotifyChanged(); }
 
         // ===== АБОНЕМЕНТИ =====
         public List<Subscription> GetSubscriptions()
         {
             var subs = _db.Table<Subscription>().ToList();
-
             foreach (var sub in subs)
             {
-                // Знаходимо послуги цього абонемента
                 var links = _db.Table<SubscriptionService>()
                     .Where(ss => ss.SubscriptionId == sub.Id).ToList();
 
@@ -296,26 +308,24 @@ namespace FitnessClub.Services
                 }
 
                 sub.ServicesList = names.Count > 0
-            ? string.Join("\n", names.Select(n => "✔ " + n))
-            : "Без послуг";
+                    ? string.Join("\n", names.Select(n => "✔ " + n))
+                    : "Без послуг";
             }
-
             return subs;
         }
         public Subscription GetSubscription(int id) => _db.Find<Subscription>(id);
-        public void AddSubscription(Subscription sub) => _db.Insert(sub);
-        public void UpdateSubscription(Subscription sub) => _db.Update(sub);
+        public void AddSubscription(Subscription sub) { _db.Insert(sub); NotifyChanged(); }
+        public void UpdateSubscription(Subscription sub) { _db.Update(sub); NotifyChanged(); }
         public void DeleteSubscription(Subscription sub)
         {
-            // Видаляємо абонемент і всі його зв'язки з послугами
             var links = _db.Table<SubscriptionService>()
                 .Where(ss => ss.SubscriptionId == sub.Id).ToList();
             foreach (var link in links)
                 _db.Delete(link);
             _db.Delete(sub);
+            NotifyChanged();
         }
 
-        // Зв'язки абонемент↔послуги
         public List<int> GetServiceIdsForSubscription(int subId) =>
             _db.Table<SubscriptionService>()
                 .Where(ss => ss.SubscriptionId == subId)
@@ -323,37 +333,40 @@ namespace FitnessClub.Services
 
         public void SetSubscriptionServices(int subId, List<int> serviceIds)
         {
-            // Видаляємо старі зв'язки
             var old = _db.Table<SubscriptionService>()
                 .Where(ss => ss.SubscriptionId == subId).ToList();
             foreach (var link in old)
                 _db.Delete(link);
 
-            // Додаємо нові
             foreach (var serviceId in serviceIds)
                 _db.Insert(new SubscriptionService { SubscriptionId = subId, ServiceId = serviceId });
+
+            NotifyChanged();
         }
 
-
+        // ===== ПОСЛУГИ =====
+        public List<Service> GetServices() => _db.Table<Service>().ToList();
         public Service GetService(int id) => _db.Find<Service>(id);
-        public void AddService(Service service) => _db.Insert(service);
-        public void UpdateService(Service service) => _db.Update(service);
+        public void AddService(Service service) { _db.Insert(service); NotifyChanged(); }
+        public void UpdateService(Service service) { _db.Update(service); NotifyChanged(); }
         public void DeleteService(Service service)
         {
-            // Прибираємо зв'язки цієї послуги з абонементами
             var links = _db.Table<SubscriptionService>()
                 .Where(ss => ss.ServiceId == service.Id).ToList();
             foreach (var link in links)
                 _db.Delete(link);
             _db.Delete(service);
+            NotifyChanged();
         }
 
+        // ===== СПЕЦІАЛІЗАЦІЇ =====
+        public List<Specialization> GetSpecializations() => _db.Table<Specialization>().ToList();
+        public Specialization GetSpecialization(int id) => _db.Find<Specialization>(id);
+        public void AddSpecialization(Specialization s) { _db.Insert(s); NotifyChanged(); }
+        public void UpdateSpecialization(Specialization s) { _db.Update(s); NotifyChanged(); }
+        public void DeleteSpecialization(Specialization s) { _db.Delete(s); NotifyChanged(); }
 
-        // ===== ДОПОМІЖНІ (тільки читання) =====
-
-        public List<Service> GetServices() => _db.Table<Service>().ToList();
-
-        // Найближча майбутня дата заданого дня тижня (+ зсув тижнів)
+        // ===== ДОПОМІЖНІ =====
         private DateTime NextWeekday(DayOfWeek day, int weeksAhead = 0)
         {
             var date = DateTime.Today;
@@ -361,15 +374,5 @@ namespace FitnessClub.Services
                 date = date.AddDays(1);
             return date.AddDays(weeksAhead * 7);
         }
-
-
-        // ===== СПЕЦІАЛІЗАЦІЇ =====
-        public List<Specialization> GetSpecializations() => _db.Table<Specialization>().ToList();
-        public Specialization GetSpecialization(int id) => _db.Find<Specialization>(id);
-        public void AddSpecialization(Specialization s) => _db.Insert(s);
-        public void UpdateSpecialization(Specialization s) => _db.Update(s);
-        public void DeleteSpecialization(Specialization s) => _db.Delete(s);
-
-
     }
 }
