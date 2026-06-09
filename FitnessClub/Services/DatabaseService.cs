@@ -155,6 +155,12 @@ namespace FitnessClub.Services
             NotifyChanged();
         }
 
+       
+        public int CountActiveBookingsForSchedule(int scheduleId) =>
+            _db.Table<ClientBooking>()
+                .ToList()
+                .Count(b => b.ScheduleId == scheduleId && b.BookingDate.Date >= DateTime.Today);
+
         // ===== ТРЕНЕРИ =====
         public List<Trainer> GetTrainers()
         {

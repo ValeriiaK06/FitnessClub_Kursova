@@ -43,6 +43,18 @@ public partial class ScheduleViewModel : BaseViewModel
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
+       
+        int activeBookings = _db.CountActiveBookingsForSchedule(id);
+        if (activeBookings > 0)
+        {
+            await _dialog.AlertAsync(
+                "Неможливо видалити",
+                $"На це заняття є активні записи клієнтів ({activeBookings}). " +
+                "Спершу скасуйте ці записи, а потім видаляйте заняття.",
+                "OK");
+            return;
+        }
+
         bool confirm = await _dialog.ConfirmAsync(
             "Видалення", "Видалити це заняття з розкладу?", "Так", "Скасувати");
         if (!confirm) return;
