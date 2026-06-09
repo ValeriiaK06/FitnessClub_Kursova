@@ -50,7 +50,7 @@ namespace FitnessClub.ViewModels
             SubscriptionsCount = _db.GetSubscriptions().Count;
             BookingsCount = _db.GetActiveBookingsCount();
             SchedulesCount = _db.GetSchedules().Count;
-            ActiveSubsCount = _db.GetClientSubscriptions().Count(s => s.IsActive);
+            ActiveSubsCount = _db.GetClientSubscriptions().Count(s => !s.IsExpired);
         }
         // ===== ІМ'Я АДМІНА =====
         [RelayCommand]
