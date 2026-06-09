@@ -210,17 +210,36 @@ namespace FitnessClub.Services
         public void UpdateClient(Client client) { _db.Update(client); NotifyChanged(); }
         public void DeleteClient(Client client)
         {
-            // Видаляємо записи цього клієнта
+            // Видаляємо записи цього клієнта на тренування
             var bookings = _db.Table<ClientBooking>()
                 .Where(b => b.ClientId == client.Id).ToList();
             foreach (var b in bookings)
                 _db.Delete(b);
 
-            // Видаляємо абонементи цього клієнта
+            // Абонементи цього клієнта — перед видаленням фіксуємо в історії
             var subs = _db.Table<ClientSubscription>()
                 .Where(cs => cs.ClientId == client.Id).ToList();
+
+            string clientName = $"{client.LastName} {client.FirstName}";
+
             foreach (var cs in subs)
+            {
+                var plan = _db.Table<Subscription>().FirstOrDefault(s => s.Id == cs.SubscriptionId);
+                string planName = plan?.Name ?? "—";
+
+                _db.Insert(new SubscriptionHistory
+                {
+                    ClientName = clientName,
+                    PlanName = planName,
+                    PurchaseDate = cs.PurchaseDate,
+                    ExpiryDate = cs.ExpiryDate,
+                    ActionDate = DateTime.Now,
+                    ActionType = "Видалено",
+                    Details = $"Видалено разом з клієнтом {clientName}"
+                });
+
                 _db.Delete(cs);
+            }
 
             // Видаляємо самого клієнта
             _db.Delete(client);
