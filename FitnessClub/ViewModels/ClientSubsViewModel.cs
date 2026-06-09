@@ -37,12 +37,35 @@ public partial class ClientSubsViewModel : BaseViewModel
     [RelayCommand]
     private async Task EditAsync(int id) => await _nav.GoToAsync($"clientsubedit?clientsub_id={id}");
 
+    
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
-        bool confirm = await _dialog.ConfirmAsync("Видалення", "Видалити цей абонемент клієнта?", "Так", "Скасувати");
+        bool confirm = await _dialog.ConfirmAsync(
+            "Видалення", "Видалити цей абонемент клієнта?", "Так", "Скасувати");
         if (!confirm) return;
+
         var item = _db.GetClientSubscription(id);
-        if (item != null) { _db.DeleteClientSubscription(item); Load(); }
+        if (item != null)
+        {
+            
+            var all = _db.GetClientSubscriptions();
+            var full = all.FirstOrDefault(cs => cs.Id == id);
+
+            _db.DeleteClientSubscription(item);
+
+            _db.AddHistory(new SubscriptionHistory
+            {
+                ClientName = full?.ClientName ?? "—",
+                PlanName = full?.PlanName ?? "—",
+                PurchaseDate = item.PurchaseDate,
+                ExpiryDate = item.ExpiryDate,
+                ActionDate = DateTime.Now,
+                ActionType = "Видалено",
+                Details = $"Видалено абонемент «{full?.PlanName ?? "—"}» клієнта {full?.ClientName ?? "—"}"
+            });
+
+            Load();
+        }
     }
 }
